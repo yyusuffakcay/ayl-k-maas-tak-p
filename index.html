@@ -332,11 +332,10 @@
         </div>
     </div>
 
-
     <!-- JAVASCRIPT PROGRAM MANTIĞI -->
     <script>
         // BİREYSEL VERİTABANI YOLU (DİĞER UYGULAMALARLA KESİNLİKLE ÇAKIŞMAZ)
-        const DB_URL = "https://genel-proje-79c7f-default-rtdb.europe-west1.firebasedatabase.app/";
+        const DB_URL = "https://genel-proje-79c7f-default-rtdb.europe-west1.firebasedatabase.app";
 
         // Eylül - Temmuz (Ağustos Tatil) Akademik Aylar
         const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
@@ -503,7 +502,6 @@
 
                 document.getElementById('studentCountBadge').innerText = keys.length;
 
-                // Ödeme Filtreleme
                 if (currentFilterStatus !== 'all') {
                     keys = keys.filter(stId => {
                         const cellKey = `${selectedYear}-${selectedFilterMonth}`;
@@ -564,7 +562,7 @@
                     renderCalendar();
                 } else {
                     selectedStudentId = null;
-                    placeholder.classList.remove('hidden');
+                    placeholder.remove('hidden');
                     content.classList.add('hidden');
                 }
 
@@ -659,7 +657,6 @@
                 grid.appendChild(cell);
             });
 
-            // Eylül - Temmuz (11 Ay) Bireysel Hesaplama
             const fee = parseFloat(st.ucret) || 0;
             const expected = fee * 11; 
             const paid = fee * paidCount;
@@ -830,13 +827,12 @@
             window.open(wpUrl, '_blank');
         }
 
-        // TOPLU MESSAGING MODAL
         function openBulkWpModal() {
             const listEl = document.getElementById('bulkWpList');
             listEl.innerHTML = '';
 
             const msgInput = document.getElementById('bulkWpMessageInput');
-            msgInput.value = `İlkikra Medresesi: Saygıdeğer velimiz, öğrencimizin aidat ve medrese durumları güncellenmiştir. Bilgilerinize sunar, hayırlı günler dileriz.`;
+            msgInput.value = `İlkikra Medresesi: Saygıdeğer velimiz, öğrencimizin aidat og medrese durumları güncellenmiştir. Bilgilerinize sunar, hayırlı günler dileriz.`;
 
             const students = systemData.ogrenciler || {};
             const keys = Object.keys(students).filter(k => students[k] && students[k].ad);
