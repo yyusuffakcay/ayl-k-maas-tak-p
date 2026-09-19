@@ -123,7 +123,7 @@
 </head>
 <body class="font-sans text-slate-100 min-h-screen p-3 sm:p-6 flex flex-col items-center justify-center">
 
-    <!-- 🚪 1. GÜVENLİK GİRİŞ KAPISI (Mühürleme Destekli) -->
+    <!-- 🚪 1. GÜVENLİK GİRİŞ KAPISI -->
     <div id="gateScreen" class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center gap-6">
         <div class="text-medrese-accent text-5xl sm:text-6xl animate-pulse">
             <i class="fa-solid fa-mosque"></i>
@@ -554,6 +554,7 @@
                 const placeholder = document.getElementById('noDataPlaceholder');
                 const content = document.getElementById('calendarContent');
 
+                // BUG FIX: placeholder.remove() yerine placeholder.classList.remove() kullanıldı!
                 if (selectedStudentId && students[selectedStudentId]) {
                     placeholder.classList.add('hidden');
                     content.classList.remove('hidden');
@@ -562,7 +563,7 @@
                     renderCalendar();
                 } else {
                     selectedStudentId = null;
-                    placeholder.remove('hidden');
+                    placeholder.classList.remove('hidden'); // BURASI DÜZELTİLDİ
                     content.classList.add('hidden');
                 }
 
@@ -832,7 +833,7 @@
             listEl.innerHTML = '';
 
             const msgInput = document.getElementById('bulkWpMessageInput');
-            msgInput.value = `İlkikra Medresesi: Saygıdeğer velimiz, öğrencimizin aidat og medrese durumları güncellenmiştir. Bilgilerinize sunar, hayırlı günler dileriz.`;
+            msgInput.value = `İlkikra Medresesi: Saygıdeğer velimiz, öğrencimizin aidat ve medrese durumları güncellenmiştir. Bilgilerinize sunar, hayırlı günler dileriz.`;
 
             const students = systemData.ogrenciler || {};
             const keys = Object.keys(students).filter(k => students[k] && students[k].ad);
