@@ -511,43 +511,50 @@
 
         async function syncWithCloud() {
             setSyncStatus('syncing');
-            try {
-                const response = await fetch(`${DB_URL}.json?_t=` + new Date().getTime(), { cache: 'no-store' });
-                if (!response.ok) {
-                    setSyncStatus('error_rules');
-                    throw new Error("Veritabanı bağlantısı yok veya erişim izni (Rules) kapalı.");
-                }
-                const data = await response.json();
-                
-                if (data && typeof data === 'object') {
-                    systemData = data;
-                    
-                    if (systemData.ogrenciler && !systemData.hocalar) {
-                        systemData.hocalar = {
-                            'hoca_default': { isim: 'Yusuf Hoca', sifre: '9876', ogrenciler: systemData.ogrenciler }
-                        };
-                        delete systemData.ogrenciler;
-                        await uploadData();
+            return new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', `${DB_URL}.json?_t=` + new Date().getTime(), true);
+                xhr.onload = async function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const data = JSON.parse(xhr.responseText);
+                            if (data && typeof data === 'object') {
+                                systemData = data;
+                                
+                                if (systemData.ogrenciler && !systemData.hocalar) {
+                                    systemData.hocalar = {
+                                        'hoca_default': { isim: 'Yusuf Hoca', sifre: '9876', ogrenciler: systemData.ogrenciler }
+                                    };
+                                    delete systemData.ogrenciler;
+                                    await uploadData();
+                                }
+                                if(!systemData.sistem_ayarlari) systemData.sistem_ayarlari = { adminPassword: "İLK İKRA" };
+                                if(!systemData.sistem_ayarlari.adminPassword) systemData.sistem_ayarlari.adminPassword = "İLK İKRA";
+                                if(!systemData.hocalar) systemData.hocalar = {};
+                            } else {
+                                await uploadData();
+                            }
+                            
+                            setSyncStatus('ok');
+                            
+                            if (!isUserTyping) {
+                                if (!isUnlocked) renderGateTeachers();
+                                else refreshActivePanel();
+                            }
+                        } catch(e) {}
+                    } else if(xhr.status === 401 || xhr.status === 403) {
+                        setSyncStatus('error_rules');
                     }
-                    if(!systemData.sistem_ayarlari) systemData.sistem_ayarlari = { adminPassword: "İLK İKRA" };
-                    if(!systemData.sistem_ayarlari.adminPassword) systemData.sistem_ayarlari.adminPassword = "İLK İKRA";
-                    if(!systemData.hocalar) systemData.hocalar = {};
-
-                } else {
-                    await uploadData();
-                }
-                
-                setSyncStatus('ok');
-                
-                if (!isUserTyping) {
-                    if (!isUnlocked) renderGateTeachers();
-                    else refreshActivePanel();
-                }
-            } catch (err) {
-                if (err.message.includes("fetch") || err.message.includes("Network")) setSyncStatus('error_net');
-                console.warn("Bulut eşleşemedi. Yerel hafıza devrede.", err);
-                loadFromLocalStorage();
-            }
+                    resolve();
+                };
+                xhr.onerror = function() {
+                    setSyncStatus('error_net');
+                    console.warn("Bulut eşleşemedi. Yerel hafıza devrede.");
+                    loadFromLocalStorage();
+                    resolve();
+                };
+                xhr.send();
+            });
         }
 
         function loadFromLocalStorage() {
@@ -564,25 +571,26 @@
         async function uploadData() {
             localStorage.setItem('ilkikra_medrese_backup', JSON.stringify(systemData));
             setSyncStatus('syncing');
-            try {
-                const response = await fetch(`${DB_URL}.json`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(systemData)
-                });
-                
-                if (!response.ok) {
-                    setSyncStatus('error_rules');
-                    showInfoModal("<i class='fa-solid fa-triangle-exclamation text-rose-500'></i>", "Veritabanı Kayıt Hatası", "Kanka, yeni açtığın veritabanında 'Rules' kısmını true yapmayı unutmuşsun! Bu yüzden telefondan kaydettiklerin buluta gitmiyor. Firebase'e girip düzelt.");
-                    console.error("Kayıt Başarısız. Firebase Rules kapalı olabilir.");
-                } else {
-                    setSyncStatus('ok');
-                }
-            } catch(e) {
-                setSyncStatus('error_net');
-                showInfoModal("<i class='fa-solid fa-wifi text-amber-500'></i>", "İnternet Engeli", "Telefon, bu dosyanın internete bağlanmasını engelliyor. Lütfen dosyayı telefonda 'Chrome' tarayıcısı ile açmayı dene.");
-                console.error("Bağlantı hatası:", e);
-            }
+            return new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('PUT', `${DB_URL}.json`, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        setSyncStatus('ok');
+                    } else {
+                        setSyncStatus('error_rules');
+                        showInfoModal("<i class='fa-solid fa-triangle-exclamation text-rose-500'></i>", "Kurallar Kapalı!", "Firebase'de Rules kısmını true yapmayı unutmuşsun kanka.");
+                    }
+                    resolve();
+                };
+                xhr.onerror = function() {
+                    setSyncStatus('error_net');
+                    showInfoModal("<i class='fa-solid fa-wifi text-amber-500'></i>", "İnternet Engeli", "Telefon dosyaya internet izni vermiyor. Sağ üstten 'Chrome ile Aç' demeyi unutma.");
+                    resolve();
+                };
+                xhr.send(JSON.stringify(systemData));
+            });
         }
 
         // --- GİRİŞ & OTURUM (GATE) ---
