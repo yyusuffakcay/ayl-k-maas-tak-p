@@ -45,7 +45,6 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         body {
-            /* Ferah, aydınlık bir arka plan görseli ve üzerine beyaz örtü */
             background-image: linear-gradient(rgba(248, 250, 252, 0.92), rgba(248, 250, 252, 0.92)), 
                               url('https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
@@ -98,18 +97,16 @@
             <i class="fa-solid fa-mosque"></i>
         </div>
         <div>
-            <!-- Gizli Yönetici Giriş Tetikleyicisi İLKİKRA MEDRESESİ yazısında -->
             <h2 onclick="openAdminLoginModal()" class="font-serif text-xl sm:text-2xl font-bold text-medrese-accent cursor-pointer hover:text-emerald-700 transition" title="Yönetici girişi için tıklayın">İLKİKRA MEDRESESİ</h2>
             <p class="text-xs text-slate-500 mt-1">Sisteme Giriş İçin Hesabınızı Seçin</p>
         </div>
         <div class="w-full space-y-4">
             <div>
-                <!-- onchange anında çalışmasın diye onfocus/onblur yönetimi eklendi -->
                 <select id="teacherSelectDropdown" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" onchange="secimYapildi(this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition mb-3">
                     <option value="" disabled selected>Hoca Seçiniz...</option>
-                    <!-- JS ile Dolacak -->
                 </select>
-                <input type="password" id="gatePasswordInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Şifreniz" class="w-full text-center tracking-widest bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition">
+                <!-- Enter tuşu desteği eklendi -->
+                <input type="password" id="gatePasswordInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" onkeypress="handleGateKeypress(event)" placeholder="Şifreniz" class="w-full text-center tracking-widest bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition">
                 <span id="gateErrorMsg" class="text-rose-500 text-xs mt-2 block hidden font-medium"><i class="fa-solid fa-triangle-exclamation"></i> Hatalı Şifre veya Seçim!</span>
             </div>
             <div class="flex items-center justify-center text-xs text-slate-500 gap-2 font-medium">
@@ -127,7 +124,8 @@
             <h3 class="font-serif text-lg font-bold text-slate-800 mb-2">Yönetici Girişi</h3>
             <p class="text-xs text-slate-500 mb-5">Lütfen sistem yönetici güvenlik kodunu girin.</p>
             
-            <input type="password" id="adminPasswordInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Güvenlik Kodu" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-accent mb-2">
+            <!-- Enter tuşu desteği eklendi -->
+            <input type="password" id="adminPasswordInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" onkeypress="handleAdminKeypress(event)" placeholder="Güvenlik Kodu" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-accent mb-2">
             <span id="adminLoginErrorMsg" class="text-rose-500 text-xs block hidden font-medium mb-4">Yetkisiz Erişim! Kod Hatalı.</span>
             
             <div class="flex gap-2 mt-4">
@@ -157,36 +155,24 @@
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- HOCA YÖNETİMİ -->
             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col">
                 <h3 class="font-bold text-sm text-slate-700 mb-4 border-b border-slate-200 pb-2 flex items-center gap-2">
                     <i class="fa-solid fa-users-chalkboard text-emerald-600"></i> Hoca Yönetimi
                 </h3>
-                
-                <!-- Hoca Ekleme Formu -->
                 <div class="flex gap-2 mb-4 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
                     <input type="text" id="newTeacherNameInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Yeni Hoca Adı (Örn: Ahmet Hoca)" class="flex-grow bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
                     <button onclick="addTeacher()" class="bg-medrese-accent hover:bg-emerald-800 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm whitespace-nowrap">Ekle</button>
                 </div>
-
-                <!-- Hocalar Listesi -->
-                <div id="adminTeacherList" class="flex-grow overflow-y-auto space-y-2 max-h-[400px] pr-1">
-                    <!-- JS Dinamik -->
-                </div>
+                <div id="adminTeacherList" class="flex-grow overflow-y-auto space-y-2 max-h-[400px] pr-1"></div>
             </div>
 
-            <!-- MEDRESE GENEL DURUMU -->
             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-2 gap-2">
                     <h3 class="font-bold text-sm text-slate-700 flex items-center gap-2">
                         <i class="fa-solid fa-chart-line text-medrese-gold"></i> Medrese Finans Raporu
                     </h3>
-                    <select id="adminMonthSelect" onchange="changeAdminFilterMonth(this.value)" class="bg-white border border-slate-200 text-slate-700 font-bold text-[11px] rounded-lg px-2 py-1.5 focus:outline-none shadow-sm">
-                        <!-- JS Dinamik -->
-                    </select>
+                    <select id="adminMonthSelect" onchange="changeAdminFilterMonth(this.value)" class="bg-white border border-slate-200 text-slate-700 font-bold text-[11px] rounded-lg px-2 py-1.5 focus:outline-none shadow-sm"></select>
                 </div>
-
-                <!-- Genel Özet -->
                 <div class="grid grid-cols-2 gap-2 mb-4">
                     <div class="bg-white border border-slate-200 rounded-xl p-3 text-center shadow-sm">
                         <p class="text-[10px] text-slate-500 font-bold uppercase">Toplam Beklenen</p>
@@ -197,11 +183,7 @@
                         <h4 id="adminTotalPaid" class="text-sm font-extrabold text-emerald-700 mt-1">0 ₺</h4>
                     </div>
                 </div>
-
-                <!-- Hocaların Sınıf Durumları -->
-                <div id="adminOverviewList" class="flex-grow overflow-y-auto space-y-3 max-h-[320px] pr-1">
-                    <!-- JS Dinamik -->
-                </div>
+                <div id="adminOverviewList" class="flex-grow overflow-y-auto space-y-3 max-h-[320px] pr-1"></div>
             </div>
         </div>
     </div>
@@ -223,8 +205,6 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6">
-            
-            <!-- Sol Sütun: Talebeler -->
             <div class="bg-slate-50/50 border border-slate-200 rounded-2xl p-4 flex flex-col h-auto min-h-[350px] lg:h-[580px] overflow-hidden">
                 <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-3 gap-2 flex-wrap">
                     <h3 class="font-bold text-sm text-slate-700 flex items-center gap-2">
@@ -243,13 +223,10 @@
                     </div>
                 </div>
 
-                <!-- Ödeme Filtresi -->
                 <div class="bg-white p-2.5 rounded-xl border border-slate-200 mb-3 space-y-2 shadow-sm">
                     <div class="flex items-center gap-2">
                         <span class="text-[11px] text-slate-500 font-bold whitespace-nowrap">Takip Ayı:</span>
-                        <select id="filterMonthSelect" onchange="changeFilterMonth(this.value)" class="flex-grow bg-slate-50 border border-slate-200 text-slate-700 font-medium text-[11px] rounded-lg px-2 py-1.5 focus:outline-none focus:border-emerald-400">
-                            <!-- JS ile Dolacak -->
-                        </select>
+                        <select id="filterMonthSelect" onchange="changeFilterMonth(this.value)" class="flex-grow bg-slate-50 border border-slate-200 text-slate-700 font-medium text-[11px] rounded-lg px-2 py-1.5 focus:outline-none focus:border-emerald-400"></select>
                     </div>
                     <div class="grid grid-cols-3 gap-1">
                         <button onclick="setFilterStatus('all')" id="filter-all" class="filter-btn bg-emerald-100 border border-emerald-300 text-emerald-700 text-[10px] font-bold py-1.5 rounded-lg active transition">Tümü</button>
@@ -258,16 +235,10 @@
                     </div>
                 </div>
 
-                <!-- Öğrenci Kartları Listesi -->
-                <div class="flex-grow overflow-y-auto pr-1 max-h-[300px] lg:max-h-none" id="studentListContainer">
-                    <!-- Dinamik -->
-                </div>
+                <div class="flex-grow overflow-y-auto pr-1 max-h-[300px] lg:max-h-none" id="studentListContainer"></div>
             </div>
 
-            <!-- Sağ Sütun: Takvim ve İstatistikler -->
             <div id="calendarPanel" class="bg-slate-50/50 border border-slate-200 rounded-2xl p-4 flex flex-col min-h-[350px]">
-                
-                <!-- Sınıf Özeti Raporu -->
                 <div class="mb-4 bg-white p-3.5 rounded-xl border border-emerald-100 shadow-sm">
                     <h3 class="font-bold text-xs text-slate-600 mb-3 border-b border-slate-100 pb-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-chart-pie text-emerald-500"></i> Seçili Ay Sınıf Özeti (<span id="summaryMonthName" class="text-emerald-700">Ocak</span>)
@@ -298,29 +269,23 @@
                 </div>
 
                 <div id="calendarContent" class="hidden flex-col gap-4">
-                    <!-- Yıllar Şeridi -->
                     <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center border-b border-slate-200 pb-3 gap-3">
-                        <div class="flex gap-1.5 overflow-x-auto whitespace-nowrap no-scrollbar pb-1 w-full" id="yearTabsContainer">
-                            <!-- JS Dinamik -->
-                        </div>
+                        <div class="flex gap-1.5 overflow-x-auto whitespace-nowrap no-scrollbar pb-1 w-full" id="yearTabsContainer"></div>
                     </div>
-
-                    <!-- 12 Ay Matrisi -->
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" id="paymentGrid">
-                        <!-- JS Dinamik -->
-                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" id="paymentGrid"></div>
                 </div>
             </div>
         </div>
     </div>
 
-
     <!-- 📋 MODALLAR -->
-    <!-- Admin Şifre Değiştirme Modali -->
     <div id="changeAdminPwdModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4 hidden">
         <div class="modal-content bg-white max-w-sm w-full p-5 rounded-2xl shadow-2xl border border-slate-200">
             <h3 class="font-serif text-sm font-bold text-medrese-accent mb-4">Yönetici Şifresini Değiştir</h3>
+            <!-- Güvenlik kodu "yusuf" istendi -->
+            <input type="text" id="adminSecurityCodeInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Güvenlik Kodu (yusuf)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-medrese-accent mb-3">
             <input type="text" id="newAdminPwdInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Yeni Yönetici Şifresi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-medrese-accent mb-4">
+            <span id="adminPwdErrorMsg" class="text-rose-500 text-xs block hidden font-medium mb-3">Güvenlik kodu hatalı! (yusuf olmalı)</span>
             <div class="flex gap-2">
                 <button onclick="closeChangeAdminPwdModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition">İptal</button>
                 <button onclick="executeChangeAdminPwd()" class="flex-1 bg-medrese-accent text-white font-bold text-xs py-2.5 rounded-xl hover:bg-emerald-900 transition">Kaydet</button>
@@ -328,7 +293,6 @@
         </div>
     </div>
 
-    <!-- Hoca Şifre Değiştirme Modali -->
     <div id="changeTeacherPwdModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4 hidden">
         <div class="modal-content bg-white max-w-sm w-full p-5 rounded-2xl shadow-2xl border border-slate-200">
             <h3 id="changeTeacherPwdTitle" class="font-serif text-sm font-bold text-medrese-accent mb-4">Hoca Şifresini Değiştir</h3>
@@ -340,7 +304,6 @@
         </div>
     </div>
 
-    <!-- A. Talebe Ekleme / Düzenleme Modali -->
     <div id="studentModal" class="modal fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1000] flex items-center justify-center p-4 hidden">
         <div class="modal-content bg-white max-w-sm w-full p-5 rounded-2xl shadow-2xl border border-slate-200">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4">
@@ -365,7 +328,6 @@
         </div>
     </div>
 
-    <!-- B. Veli WP Listesi Modali -->
     <div id="wpModal" class="modal fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1000] flex items-center justify-center p-4 hidden">
         <div class="modal-content bg-white max-w-md w-full p-5 rounded-3xl border border-slate-200 shadow-2xl max-h-[80vh] flex flex-col">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4 flex-shrink-0">
@@ -379,7 +341,6 @@
         </div>
     </div>
 
-    <!-- C. Toplu Whatsapp Modali -->
     <div id="bulkWpModal" class="modal fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1200] flex items-center justify-center p-4 hidden">
         <div class="modal-content bg-white max-w-md w-full p-5 rounded-3xl border border-slate-200 shadow-2xl max-h-[85vh] flex flex-col">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4 flex-shrink-0">
@@ -392,12 +353,14 @@
                 <label class="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Gönderilecek Ortak Mesaj:</label>
                 <textarea id="bulkWpMessageInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" rows="3" placeholder="Sınıf velilerine ortak mesajı buraya yazın..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 resize-none"></textarea>
             </div>
-            <p class="text-[10px] text-slate-500 mb-2 flex-shrink-0 font-bold uppercase tracking-wider">İletişim Listesi:</p>
-            <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar" id="bulkWpList"></div>
+            <p class="text-[10px] text-slate-500 mb-2 flex-shrink-0 font-bold uppercase tracking-wider">İletişim Listesi (Toplu Gönderim):</p>
+            <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar mb-3" id="bulkWpList"></div>
+            <button onclick="sendBulkWpAll()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+                <i class="fa-brands fa-whatsapp text-sm"></i> Tüm Listeye Sırayla Gönder
+            </button>
         </div>
     </div>
 
-    <!-- D. Bildirim Modali -->
     <div id="infoModal" class="modal fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[10000] flex items-center justify-center p-4 hidden">
         <div class="modal-content bg-white max-w-sm w-full p-6 rounded-2xl text-center border border-slate-200 shadow-2xl">
             <div id="infoModalIcon" class="text-medrese-emerald text-4xl mb-3"><i class="fa-solid fa-circle-info"></i></div>
@@ -407,7 +370,6 @@
         </div>
     </div>
 
-    <!-- E. Silme Onay Modali -->
     <div id="confirmModal" class="modal fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 hidden">
         <div class="modal-content bg-white max-w-sm w-full p-6 rounded-2xl text-center border-t-4 border-rose-500 shadow-2xl">
             <div class="text-rose-500 text-4xl mb-3"><i class="fa-solid fa-triangle-exclamation"></i></div>
@@ -420,16 +382,13 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT PROGRAM MANTIĞI -->
     <script>
-        // ODA TAKİP MANTIĞIYLA AYNI YAPI (KÖK DİZİN YERİNE ALT KLASÖRE YAZIYORUZ Kİ CORS ENGELİNE TAKILMASIN)
         const FIREBASE_URL = "https://yyusuffakcay-56280-default-rtdb.europe-west1.firebasedatabase.app/";
 
         const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
         const START_YEAR = 2026;
         const END_YEAR = 2035;
 
-        // SİSTEM MİMARİSİ
         let systemData = {
             sistem_ayarlari: { adminPassword: "İLK İKRA" },
             hocalar: {}
@@ -440,7 +399,7 @@
         let currentTeacherId = null; 
         
         let isUserTyping = false; 
-        let seciliGirisIsmi = ""; // Seçilen hoca adını tutmak için
+        let seciliGirisIsmi = "";
         let selectedStudentId = null;
         let selectedYear = START_YEAR;
         let selectedFilterMonth = new Date().getMonth();
@@ -451,7 +410,6 @@
         let editingTeacherPwdId = null;
         let expandedAdminLists = new Set(); 
 
-        // 🟢 BAĞLANTI DURUMUNU GÖSTEREN FONKSİYON
         function setSyncStatus(status) {
             const dot = document.getElementById('syncDot');
             const txt = document.getElementById('syncText');
@@ -461,11 +419,6 @@
                 dot.className = 'w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]'; 
                 txt.innerText = 'Bulut Güncel'; 
                 txt.className = 'text-emerald-700';
-            }
-            else if(status === 'error_rules') { 
-                dot.className = 'w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_5px_#f43f5e]'; 
-                txt.innerText = 'Kurallar Kapalı!'; 
-                txt.className = 'text-rose-600';
             }
             else if(status === 'error_net') { 
                 dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_5px_#f59e0b]'; 
@@ -484,7 +437,6 @@
             await verileriBuluttanCek();
             checkSavedSession();
             
-            // Oda takip sistemindeki gibi sürekli kontrol, ama fetch en sade haliyle!
             setInterval(async () => {
                 if (!isUserTyping) {
                     await verileriBuluttanCek();
@@ -509,11 +461,9 @@
             });
         }
 
-        // TERTEMİZ ODA TAKİP FETCH MANTIĞI (Önbellek parametresi veya Header yok!)
         async function verileriBuluttanCek() {
             setSyncStatus('syncing');
             try {
-                // SADECE FETCH. Header yok. ?_t= yok. Direkt alt klasöre (.json) okuma.
                 let r = await fetch(FIREBASE_URL + "maas_takip_pro.json");
                 let data = await r.json();
                 
@@ -523,7 +473,7 @@
                     if(!systemData.sistem_ayarlari.adminPassword) systemData.sistem_ayarlari.adminPassword = "İLK İKRA";
                     if(!systemData.hocalar) systemData.hocalar = {};
                 } else {
-                    await verileriBulutaKaydet(); // İlk defa açılıyorsa boş yapıyı kaydet
+                    await verileriBulutaKaydet();
                 }
                 
                 setSyncStatus('ok');
@@ -534,17 +484,14 @@
                 }
             } catch (err) {
                 setSyncStatus('error_net');
-                console.warn("Bulut okuma hatası", err);
                 loadFromLocalStorage();
             }
         }
 
-        // TERTEMİZ ODA TAKİP PUT MANTIĞI (Header yok!)
         async function verileriBulutaKaydet() {
             localStorage.setItem('ilkikra_maas_backup', JSON.stringify(systemData));
             setSyncStatus('syncing');
             try {
-                // SADECE PUT. Header eklemek telefonda CORS hatası verir (Oda Takipte vermemesinin sebebi bu)
                 await fetch(FIREBASE_URL + "maas_takip_pro.json", {
                     method: 'PUT',
                     body: JSON.stringify(systemData)
@@ -552,7 +499,6 @@
                 setSyncStatus('ok');
             } catch (err) {
                 setSyncStatus('error_net');
-                console.warn("Bulut yazma hatası", err);
             }
         }
 
@@ -567,6 +513,7 @@
             }
         }
 
+        // Oturum kontrolü geliştirildi (Artık çıkış yapılana kadar kalıcı)
         function checkSavedSession() {
             const role = localStorage.getItem('ilkikra_role');
             const tid = localStorage.getItem('ilkikra_tid');
@@ -581,7 +528,6 @@
             }
         }
 
-        // Seçim yapıldığında değeri değişkene atar (klavye vs açıldığında resetlenmesin diye)
         function secimYapildi(val) {
             seciliGirisIsmi = val;
         }
@@ -589,7 +535,6 @@
         function renderGateTeachers() {
             const select = document.getElementById('teacherSelectDropdown');
             if(!select) return;
-            // Eğer daha önceden seçili bir isim varsa, onu hafızada tut.
             const currentSelection = seciliGirisIsmi || select.value;
             select.innerHTML = '<option value="" disabled selected>Hoca Seçiniz...</option>';
             
@@ -607,10 +552,17 @@
             }
         }
 
+        // Enter tuşu desteği
+        function handleGateKeypress(e) {
+            if (e.key === 'Enter') {
+                checkTeacherLogin();
+            }
+        }
+
         function checkTeacherLogin() {
             const select = document.getElementById('teacherSelectDropdown');
             const rawInput = document.getElementById('gatePasswordInput').value;
-            const pwdInput = String(rawInput).trim(); // Sayı da girilse metin (String) yapar
+            const pwdInput = String(rawInput).trim();
             const hId = select.value;
 
             if (!hId) {
@@ -626,10 +578,11 @@
                 isUnlocked = true;
                 currentRole = 'teacher';
                 currentTeacherId = hId;
-                if (document.getElementById('rememberMeCheck').checked) {
-                    localStorage.setItem('ilkikra_role', 'teacher');
-                    localStorage.setItem('ilkikra_tid', hId);
-                }
+                
+                // Oturumu kalıcı kaydet
+                localStorage.setItem('ilkikra_role', 'teacher');
+                localStorage.setItem('ilkikra_tid', hId);
+                
                 document.getElementById('gateErrorMsg').classList.add('hidden');
                 document.getElementById('gatePasswordInput').value = '';
                 showPanelScreen();
@@ -646,9 +599,15 @@
         }
         function closeAdminLoginModal() { document.getElementById('adminLoginModal').classList.add('hidden'); }
         
+        // Enter tuşu desteği
+        function handleAdminKeypress(e) {
+            if (e.key === 'Enter') {
+                checkAdminPassword();
+            }
+        }
+
         function checkAdminPassword() {
             const rawInput = document.getElementById('adminPasswordInput').value;
-            // Hem telefondaki hem de bilgisayardaki gereksiz boşlukları tamamen siler, büyütür
             const input = String(rawInput).replace(/\s/g, '').toUpperCase();
             
             const rawPwd = systemData.sistem_ayarlari.adminPassword || "İLK İKRA";
@@ -658,6 +617,7 @@
                 isUnlocked = true;
                 currentRole = 'admin';
                 localStorage.setItem('ilkikra_role', 'admin'); 
+                localStorage.removeItem('ilkikra_tid');
                 closeAdminLoginModal();
                 showPanelScreen();
             } else {
@@ -861,13 +821,25 @@
         }
 
         function openChangeAdminPasswordModal() {
+            document.getElementById('adminSecurityCodeInput').value = '';
             document.getElementById('newAdminPwdInput').value = '';
+            document.getElementById('adminPwdErrorMsg').classList.add('hidden');
             document.getElementById('changeAdminPwdModal').classList.remove('hidden');
         }
         function closeChangeAdminPwdModal() { document.getElementById('changeAdminPwdModal').classList.add('hidden'); }
+        
+        // Yönetici şifre değiştirme (Güvenlik kodu "yusuf" şartı eklendi)
         function executeChangeAdminPwd() {
+            const secCode = String(document.getElementById('adminSecurityCodeInput').value).trim().toLowerCase();
             const pwd = String(document.getElementById('newAdminPwdInput').value).trim();
-            if(!pwd) return;
+            
+            if (secCode !== 'yusuf') {
+                document.getElementById('adminPwdErrorMsg').classList.remove('hidden');
+                return;
+            }
+            if (!pwd) return;
+            
+            document.getElementById('adminPwdErrorMsg').classList.add('hidden');
             systemData.sistem_ayarlari.adminPassword = pwd;
             verileriBulutaKaydet(); 
             closeChangeAdminPwdModal();
@@ -1151,19 +1123,37 @@
                 const rawPhone = student.veli_tel || '';
                 const row = document.createElement('div');
                 row.className = "flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs";
-                row.innerHTML = `<div class="text-left"><p class="font-bold text-slate-800">${student.ad}</p><p class="text-[10px] text-slate-500 font-medium">Veli: ${rawPhone || 'Yok'}</p></div><button onclick="sendBulkWpIndividual('${rawPhone}')" class="bg-emerald-500 text-white font-bold text-[10px] py-1.5 px-3 rounded-lg"><i class="fa-brands fa-whatsapp text-sm"></i> Gönder</button>`;
+                row.innerHTML = `<div class="text-left"><p class="font-bold text-slate-800">${student.ad}</p><p class="text-[10px] text-slate-500 font-medium">Veli: ${rawPhone || 'Yok'}</p></div><span class="text-emerald-600 font-bold text-[10px]"><i class="fa-solid fa-check"></i> Listede</span>`;
                 listEl.appendChild(row);
             });
             document.getElementById('bulkWpModal').classList.remove('hidden');
         }
         function closeBulkWpModal() { document.getElementById('bulkWpModal').classList.add('hidden'); }
-        function sendBulkWpIndividual(rawPhone) {
-            let cleanPhone = rawPhone.replace(/\s+/g, '').replace(/[^0-9]/g, '');
-            if (!cleanPhone) { showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Hata", "Telefon yok."); return; }
-            if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) cleanPhone = '90' + cleanPhone;
+        
+        // Düzeltilmiş toplu gönderim fonksiyonu
+        function sendBulkWpAll() {
             const customMsg = document.getElementById('bulkWpMessageInput').value.trim();
-            if (!customMsg) return;
-            window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(customMsg)}`, '_blank');
+            if (!customMsg) { showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Uyarı", "Lütfen mesaj yazın."); return; }
+            
+            const students = getTeacherStudents();
+            let count = 0;
+            Object.keys(students).forEach(stId => {
+                const student = students[stId];
+                let rawPhone = student.veli_tel || '';
+                let cleanPhone = rawPhone.replace(/\s+/g, '').replace(/[^0-9]/g, '');
+                if (cleanPhone) {
+                    if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) cleanPhone = '90' + cleanPhone;
+                    setTimeout(() => {
+                        window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(customMsg)}`, '_blank');
+                    }, count * 600); // Tarayıcı engelini aşmak için hafif gecikmeli açılır
+                    count++;
+                }
+            });
+            if (count === 0) {
+                showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Uyarı", "Gönderilebilecek geçerli telefon numarası bulunamadı.");
+            } else {
+                closeBulkWpModal();
+            }
         }
 
         function showInfoModal(iconHtml, title, msg) { document.getElementById('infoModalIcon').innerHTML = iconHtml; document.getElementById('infoModalTitle').innerText = title; document.getElementById('infoModalMsg').innerText = msg; document.getElementById('infoModal').classList.remove('hidden'); }
