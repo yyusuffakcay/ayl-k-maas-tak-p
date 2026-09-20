@@ -603,10 +603,14 @@
         function closeAdminLoginModal() { document.getElementById('adminLoginModal').classList.add('hidden'); }
         
         function checkAdminPassword() {
-            const input = document.getElementById('adminPasswordInput').value;
-            const realPwd = systemData.sistem_ayarlari.adminPassword || "İLK İKRA";
+            // Telefon klavyesindeki otomatik boşlukları siler (.trim())
+            const input = document.getElementById('adminPasswordInput').value.trim();
             
-            if (input === realPwd) {
+            // Eğer şifre sadece sayılardan oluşuyorsa (örn: 12345) sistem çökmesin diye String (metin) formatına zorluyoruz.
+            const realPwd = String(systemData.sistem_ayarlari.adminPassword || "İLK İKRA").trim();
+            
+            // Telefonda büyük/küçük harf duyarlılığı yüzünden hata vermemesi için ikisini de büyütüp karşılaştırıyoruz
+            if (String(input).toLocaleUpperCase('tr-TR') === realPwd.toLocaleUpperCase('tr-TR')) {
                 isUnlocked = true;
                 currentRole = 'admin';
                 localStorage.setItem('ilkikra_role', 'admin'); // Yönetici oturumunu da kaydet
