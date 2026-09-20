@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İlkikra Medresesi Bireysel Yönetim Paneli</title>
+    <title>İlkikra Medresesi Yönetim Paneli</title>
 
     <!-- Google Fonts ve FontAwesome İkonları -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,28 +36,13 @@
     </script>
 
     <style>
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(241, 245, 249, 1);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(16, 185, 129, 0.3);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(16, 185, 129, 0.6);
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(241, 245, 249, 1); }
+        ::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.6); }
         
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         body {
             /* Ferah, aydınlık bir arka plan görseli ve üzerine beyaz örtü */
@@ -87,40 +72,16 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .member-card:hover {
-            border-color: #34d399;
-            background: #f0fdf4;
-        }
-        .member-card.active {
-            background: #ecfdf5;
-            border-color: #10b981;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
-        }
+        .member-card:hover { border-color: #34d399; background: #f0fdf4; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .member-card.active { background: #ecfdf5; border-color: #10b981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
 
         .cell {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            padding: 10px;
-            min-height: 65px;
+            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s ease; position: relative; padding: 10px; min-height: 65px;
         }
-        .cell:hover {
-            border-color: #34d399;
-            background: #f0fdf4;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-        .cell.paid {
-            background: #ecfdf5;
-            border-color: #10b981;
-        }
+        .cell:hover { border-color: #34d399; background: #f0fdf4; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .cell.paid { background: #ecfdf5; border-color: #10b981; }
     </style>
 </head>
 <body class="font-sans text-slate-800 min-h-screen p-3 sm:p-6 flex flex-col items-center justify-center">
@@ -131,34 +92,126 @@
             <i class="fa-solid fa-mosque"></i>
         </div>
         <div>
-            <h2 class="font-serif text-xl sm:text-2xl font-bold text-medrese-accent">GÜVENLİK GİRİŞİ</h2>
-            <p class="text-xs text-slate-500 mt-1">İlkikra Medresesi Bireysel Paneline Giriş İçin Şifreyi Yazın</p>
+            <!-- Gizli Yönetici Giriş Tetikleyicisi İLKİKRA MEDRESESİ yazısında -->
+            <h2 onclick="openAdminLoginModal()" class="font-serif text-xl sm:text-2xl font-bold text-medrese-accent cursor-pointer hover:text-emerald-700 transition" title="Yönetici girişi için tıklayın">İLKİKRA MEDRESESİ</h2>
+            <p class="text-xs text-slate-500 mt-1">Sisteme Giriş İçin Hesabınızı Seçin</p>
         </div>
         <div class="w-full space-y-4">
             <div>
-                <input type="password" id="gatePasswordInput" placeholder="Şifre (Varsayılan: 9876)" class="w-full text-center tracking-widest bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition">
-                <span id="gateErrorMsg" class="text-rose-500 text-xs mt-1 block hidden font-medium"><i class="fa-solid fa-triangle-exclamation"></i> Hatalı Şifre! Tekrar Deneyin.</span>
+                <select id="teacherSelectDropdown" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition mb-3">
+                    <option value="" disabled selected>Hoca Seçiniz...</option>
+                    <!-- JS ile Dolacak -->
+                </select>
+                <input type="password" id="gatePasswordInput" placeholder="Şifreniz" class="w-full text-center tracking-widest bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition">
+                <span id="gateErrorMsg" class="text-rose-500 text-xs mt-2 block hidden font-medium"><i class="fa-solid fa-triangle-exclamation"></i> Hatalı Şifre veya Seçim!</span>
             </div>
             <div class="flex items-center justify-center text-xs text-slate-500 gap-2 font-medium">
                 <input type="checkbox" id="rememberMeCheck" checked class="accent-medrese-emerald w-4 h-4 rounded">
-                <label for="rememberMeCheck" class="cursor-pointer hover:text-slate-700 transition">Şifremi hatırla, bir daha sorma ✅</label>
+                <label for="rememberMeCheck" class="cursor-pointer hover:text-slate-700 transition">Oturumu açık tut</label>
             </div>
-            <button onclick="checkGatePassword()" class="w-full bg-medrese-emerald text-white font-bold text-sm py-3 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-600/20">Sisteme Giriş Yap</button>
+            <button onclick="checkTeacherLogin()" class="w-full bg-medrese-emerald text-white font-bold text-sm py-3 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-600/20">Sisteme Giriş Yap</button>
         </div>
     </div>
 
-    <!-- 👤 2. BİREYSEL SINIF ÇALIŞMA ALANI -->
+    <!-- 👑 YÖNETİCİ GİRİŞ MODALİ -->
+    <div id="adminLoginModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white max-w-sm w-full p-6 rounded-3xl shadow-2xl border border-slate-200 text-center">
+            <div class="text-medrese-accent text-4xl mb-4"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3 class="font-serif text-lg font-bold text-slate-800 mb-2">Yönetici Girişi</h3>
+            <p class="text-xs text-slate-500 mb-5">Lütfen sistem yönetici güvenlik kodunu girin.</p>
+            
+            <input type="password" id="adminPasswordInput" placeholder="Güvenlik Kodu" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-accent mb-2">
+            <span id="adminLoginErrorMsg" class="text-rose-500 text-xs block hidden font-medium mb-4">Yetkisiz Erişim! Kod Hatalı.</span>
+            
+            <div class="flex gap-2 mt-4">
+                <button onclick="closeAdminLoginModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold text-xs py-3 rounded-xl hover:bg-slate-200 transition">İptal</button>
+                <button onclick="checkAdminPassword()" class="flex-1 bg-medrese-accent text-white font-bold text-xs py-3 rounded-xl hover:bg-emerald-900 transition shadow-lg">Giriş Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👑 3. YÖNETİCİ (ADMIN) PANELİ -->
+    <div id="adminPanel" class="w-full max-w-[1000px] glass-card rounded-3xl p-4 sm:p-6 flex flex-col gap-6 hidden">
+        <header class="flex flex-col sm:flex-row justify-between items-center pb-5 border-b border-slate-200 gap-3">
+            <div class="logo-area text-center sm:text-left">
+                <h1 class="font-serif text-xl sm:text-2xl font-bold text-medrese-accent flex items-center gap-2 justify-center sm:justify-start">
+                    <i class="fa-solid fa-chess-king text-medrese-gold"></i> <span>Genel Yönetim Merkezi</span>
+                </h1>
+                <p class="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Tüm hocaları ve medrese finans durumunu buradan yönetin.</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="openChangeAdminPasswordModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1">
+                    <i class="fa-solid fa-key"></i> Şifre Değiş
+                </button>
+                <button onclick="logout()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1">
+                    <i class="fa-solid fa-right-from-bracket"></i> Çıkış
+                </button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- HOCA YÖNETİMİ -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col">
+                <h3 class="font-bold text-sm text-slate-700 mb-4 border-b border-slate-200 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-users-chalkboard text-emerald-600"></i> Hoca Yönetimi
+                </h3>
+                
+                <!-- Hoca Ekleme Formu -->
+                <div class="flex gap-2 mb-4 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+                    <input type="text" id="newTeacherNameInput" placeholder="Yeni Hoca Adı (Örn: Ahmet Hoca)" class="flex-grow bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
+                    <button onclick="addTeacher()" class="bg-medrese-accent hover:bg-emerald-800 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm whitespace-nowrap">Ekle</button>
+                </div>
+
+                <!-- Hocalar Listesi -->
+                <div id="adminTeacherList" class="flex-grow overflow-y-auto space-y-2 max-h-[400px] pr-1">
+                    <!-- JS Dinamik -->
+                </div>
+            </div>
+
+            <!-- MEDRESE GENEL DURUMU -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-2 gap-2">
+                    <h3 class="font-bold text-sm text-slate-700 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-medrese-gold"></i> Medrese Finans Raporu
+                    </h3>
+                    <select id="adminMonthSelect" onchange="changeAdminFilterMonth(this.value)" class="bg-white border border-slate-200 text-slate-700 font-bold text-[11px] rounded-lg px-2 py-1.5 focus:outline-none shadow-sm">
+                        <!-- JS Dinamik -->
+                    </select>
+                </div>
+
+                <!-- Genel Özet -->
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <div class="bg-white border border-slate-200 rounded-xl p-3 text-center shadow-sm">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase">Toplam Beklenen</p>
+                        <h4 id="adminTotalExpected" class="text-sm font-extrabold text-slate-700 mt-1">0 ₺</h4>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center shadow-sm">
+                        <p class="text-[10px] text-emerald-600 font-bold uppercase">Toplam Ödenen</p>
+                        <h4 id="adminTotalPaid" class="text-sm font-extrabold text-emerald-700 mt-1">0 ₺</h4>
+                    </div>
+                </div>
+
+                <!-- Hocaların Sınıf Durumları -->
+                <div id="adminOverviewList" class="flex-grow overflow-y-auto space-y-3 max-h-[320px] pr-1">
+                    <!-- JS Dinamik -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 👤 2. BİREYSEL SINIF ÇALIŞMA ALANI (HOCA PANELİ) -->
     <div id="mainPanel" class="w-full max-w-[1200px] glass-card rounded-3xl p-4 sm:p-6 flex flex-col gap-6 hidden">
         <header class="flex flex-col sm:flex-row justify-between items-center pb-5 border-b border-slate-200 gap-3">
             <div class="logo-area text-center sm:text-left">
-                <h1 class="font-serif text-lg sm:text-xl font-bold text-medrese-accent flex items-center gap-2 justify-center sm:justify-start">
-                    <i class="fa-solid fa-graduation-cap text-medrese-emerald"></i> <span>Yusuf Hoca Bireysel Paneli</span>
+                <h1 id="teacherPanelTitle" class="font-serif text-lg sm:text-xl font-bold text-medrese-accent flex items-center gap-2 justify-center sm:justify-start">
+                    <i class="fa-solid fa-graduation-cap text-medrese-emerald"></i> <span>Hoca Bireysel Paneli</span>
                 </h1>
-                <p class="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Medrese Aidat &amp; Aylık Maaş Takip Masası (Bireysel ✅)</p>
+                <p class="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Medrese Aidat &amp; Sınıf Takip Masası (Bireysel ✅)</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="forgetPassword()" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1 shadow-sm">
-                    <i class="fa-solid fa-lock"></i> Şifreyi Unut
+                <button onclick="logout()" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1 shadow-sm">
+                    <i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap
                 </button>
             </div>
         </header>
@@ -208,6 +261,7 @@
             <!-- Sağ Sütun: Takvim -->
             <div id="calendarPanel" class="bg-slate-50/50 border border-slate-200 rounded-2xl p-4 flex flex-col min-h-[350px]">
                 
+                <!-- Sınıf Özeti Raporu -->
                 <div class="mb-4 bg-white p-3.5 rounded-xl border border-emerald-100 shadow-sm">
                     <h3 class="font-bold text-xs text-slate-600 mb-3 border-b border-slate-100 pb-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-chart-pie text-emerald-500"></i> Seçili Ay Sınıf Özeti (<span id="summaryMonthName" class="text-emerald-700">Ocak</span>)
@@ -234,7 +288,7 @@
 
                 <div id="noDataPlaceholder" class="flex-grow flex flex-col items-center justify-center py-10 text-slate-400 gap-4">
                     <i class="fa-solid fa-circle-user text-5xl text-emerald-100 animate-pulse"></i>
-                    <p class="text-xs text-center font-medium">Ödemeleri ve takvimi yönetmek için sol taraftan bir talebeye tıklayın.</p>
+                    <p class="text-xs text-center font-medium">Bireysel ödemeleri ve takvimi yönetmek için sol taraftan bir talebeye tıklayın.</p>
                 </div>
 
                 <div id="calendarContent" class="hidden flex-col gap-4">
@@ -245,7 +299,7 @@
                         </div>
                     </div>
 
-                    <!-- 12 Ay Matrisi (Ağustos Muaf!) -->
+                    <!-- 12 Ay Matrisi -->
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" id="paymentGrid">
                         <!-- JS Dinamik -->
                     </div>
@@ -254,7 +308,32 @@
         </div>
     </div>
 
+
     <!-- 📋 MODALLAR -->
+
+    <!-- Admin Şifre Değiştirme Modali -->
+    <div id="changeAdminPwdModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white max-w-sm w-full p-5 rounded-2xl shadow-2xl border border-slate-200">
+            <h3 class="font-serif text-sm font-bold text-medrese-accent mb-4">Yönetici Şifresini Değiştir</h3>
+            <input type="text" id="newAdminPwdInput" placeholder="Yeni Yönetici Şifresi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-medrese-accent mb-4">
+            <div class="flex gap-2">
+                <button onclick="closeChangeAdminPwdModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition">İptal</button>
+                <button onclick="executeChangeAdminPwd()" class="flex-1 bg-medrese-accent text-white font-bold text-xs py-2.5 rounded-xl hover:bg-emerald-900 transition">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hoca Şifre Değiştirme Modali -->
+    <div id="changeTeacherPwdModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white max-w-sm w-full p-5 rounded-2xl shadow-2xl border border-slate-200">
+            <h3 id="changeTeacherPwdTitle" class="font-serif text-sm font-bold text-medrese-accent mb-4">Hoca Şifresini Değiştir</h3>
+            <input type="text" id="newTeacherPwdInput" placeholder="Yeni Şifre" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-medrese-accent mb-4">
+            <div class="flex gap-2">
+                <button onclick="closeChangeTeacherPwdModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition">İptal</button>
+                <button onclick="executeChangeTeacherPwd()" class="flex-1 bg-medrese-accent text-white font-bold text-xs py-2.5 rounded-xl hover:bg-emerald-900 transition">Kaydet</button>
+            </div>
+        </div>
+    </div>
 
     <!-- A. Talebe Ekleme / Düzenleme Modali -->
     <div id="studentModal" class="modal fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1000] flex items-center justify-center p-4 hidden">
@@ -266,17 +345,17 @@
             <form onsubmit="executeSaveStudent(event)" class="space-y-4">
                 <div>
                     <label class="text-[10px] text-slate-500 font-bold block mb-1">Talebe Adı Soyadı</label>
-                    <input type="text" id="studentNameInput" placeholder="Örn: Yusuf Akçay" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition">
+                    <input type="text" id="studentNameInput" placeholder="Örn: Yusuf Akçay" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
                 </div>
                 <div>
                     <label class="text-[10px] text-slate-500 font-bold block mb-1">Aylık Aidat / Tutar (₺)</label>
-                    <input type="number" id="studentFeeInput" placeholder="Örn: 500" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition">
+                    <input type="number" id="studentFeeInput" placeholder="Örn: 500" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
                 </div>
                 <div>
                     <label class="text-[10px] text-slate-500 font-bold block mb-1">Veli Telefon Numarası</label>
-                    <input type="text" id="studentPhoneInput" placeholder="Örn: 5551234567" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition">
+                    <input type="text" id="studentPhoneInput" placeholder="Örn: 5551234567" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
                 </div>
-                <button type="submit" id="studentSubmitBtn" class="w-full bg-medrese-emerald text-white font-bold text-xs py-3 rounded-xl hover:bg-emerald-700 transition shadow-md shadow-emerald-600/20">Kaydet</button>
+                <button type="submit" id="studentSubmitBtn" class="w-full bg-medrese-emerald text-white font-bold text-xs py-3 rounded-xl hover:bg-emerald-700 transition shadow-md">Kaydet</button>
             </form>
         </div>
     </div>
@@ -290,12 +369,8 @@
                 </h3>
                 <button onclick="closeWpModal()" class="text-slate-400 hover:text-rose-500 transition text-sm"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
-            <p class="text-[10px] text-slate-500 mb-3 flex-shrink-0">Talebelerin veli numaralarını doğrudan buraya yazabilir ve tek tıkla mesaj gönderebilirsiniz.</p>
-
-            <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar" id="wpModalStudentList">
-                <!-- JS Dinamik -->
-            </div>
+            <p class="text-[10px] text-slate-500 mb-3 flex-shrink-0">Talebelerin veli numaralarını kaydedip teşekkür mesajı gönderebilirsiniz.</p>
+            <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar" id="wpModalStudentList"></div>
         </div>
     </div>
 
@@ -308,16 +383,12 @@
                 </h3>
                 <button onclick="closeBulkWpModal()" class="text-slate-400 hover:text-rose-500 transition text-sm"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
             <div class="space-y-2 flex-shrink-0 mb-4">
                 <label class="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Gönderilecek Ortak Mesaj:</label>
-                <textarea id="bulkWpMessageInput" rows="3" placeholder="Sınıf velilerine ortak mesajı buraya yazın..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition resize-none"></textarea>
+                <textarea id="bulkWpMessageInput" rows="3" placeholder="Sınıf velilerine ortak mesajı buraya yazın..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 resize-none"></textarea>
             </div>
-
             <p class="text-[10px] text-slate-500 mb-2 flex-shrink-0 font-bold uppercase tracking-wider">İletişim Listesi:</p>
-            <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar" id="bulkWpList">
-                <!-- JS Dinamik -->
-            </div>
+            <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar" id="bulkWpList"></div>
         </div>
     </div>
 
@@ -339,7 +410,7 @@
             <p id="confirmMessage" class="text-xs text-slate-500 mb-5">Bu işlem geri alınamaz.</p>
             <div class="flex gap-3">
                 <button onclick="closeConfirmModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-3 rounded-xl transition">Vazgeç</button>
-                <button onclick="executeConfirmedDelete()" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs py-3 rounded-xl transition shadow-md shadow-rose-500/20">Evet, Sil</button>
+                <button onclick="executeConfirmedDelete()" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs py-3 rounded-xl transition shadow-md">Evet, Sil</button>
             </div>
         </div>
     </div>
@@ -350,26 +421,32 @@
         const START_YEAR = 2026;
         const END_YEAR = 2035;
 
+        // YENİ SİSTEM MİMARİSİ
         let systemData = {
-            sistem_ayarlari: { gatePassword: "9876" },
-            ogrenciler: {}
+            sistem_ayarlari: { adminPassword: "İLK İKRA" },
+            hocalar: {}
         };
 
         let isUnlocked = false;
+        let currentRole = null; // 'admin' veya 'teacher'
+        let currentTeacherId = null; 
+        
         let isUserTyping = false; 
         let selectedStudentId = null;
         let selectedYear = START_YEAR;
         let selectedFilterMonth = new Date().getMonth();
+        let adminFilterMonth = new Date().getMonth();
         let currentFilterStatus = 'all';
         let confirmActionCallback = null;
         let editingStudentId = null;
+        let editingTeacherPwdId = null;
 
         window.onload = async function() {
             try {
-                fillMonthsDropdown();
+                fillMonthsDropdowns();
                 await syncWithCloud();
                 checkSavedSession();
-
+                
                 setInterval(async () => {
                     if (!isUserTyping) await syncWithCloud();
                 }, 5000);
@@ -379,18 +456,21 @@
             }
         };
 
-        function fillMonthsDropdown() {
-            const select = document.getElementById('filterMonthSelect');
-            if (select) {
-                select.innerHTML = '';
-                MONTHS.forEach((m, idx) => {
-                    const opt = document.createElement('option');
-                    opt.value = idx;
-                    opt.innerText = (idx === 7) ? `${m} (TATİL)` : m;
-                    if (idx === selectedFilterMonth) opt.selected = true;
-                    select.appendChild(opt);
-                });
-            }
+        function fillMonthsDropdowns() {
+            const selects = ['filterMonthSelect', 'adminMonthSelect'];
+            selects.forEach(id => {
+                const select = document.getElementById(id);
+                if (select) {
+                    select.innerHTML = '';
+                    MONTHS.forEach((m, idx) => {
+                        const opt = document.createElement('option');
+                        opt.value = idx;
+                        opt.innerText = (idx === 7) ? `${m} (TATİL)` : m;
+                        if (idx === new Date().getMonth()) opt.selected = true;
+                        select.appendChild(opt);
+                    });
+                }
+            });
         }
 
         async function syncWithCloud() {
@@ -399,13 +479,29 @@
                 if (!response.ok) throw new Error("Veritabanı bağlantısı yok.");
                 const data = await response.json();
                 
-                if (data && typeof data === 'object' && data.sistem_ayarlari) {
+                if (data && typeof data === 'object') {
                     systemData = data;
-                    if (!systemData.ogrenciler) systemData.ogrenciler = {};
+                    
+                    // GÖÇ MANTIĞI (MIGRATION): Eski 'ogrenciler' yapısı varsa, onu varsayılan hocaya ata.
+                    if (systemData.ogrenciler && !systemData.hocalar) {
+                        systemData.hocalar = {
+                            'hoca_default': { isim: 'Yusuf Hoca', sifre: '9876', ogrenciler: systemData.ogrenciler }
+                        };
+                        delete systemData.ogrenciler;
+                        await uploadData();
+                    }
+                    if(!systemData.sistem_ayarlari) systemData.sistem_ayarlari = { adminPassword: "İLK İKRA" };
+                    if(!systemData.sistem_ayarlari.adminPassword) systemData.sistem_ayarlari.adminPassword = "İLK İKRA";
+                    if(!systemData.hocalar) systemData.hocalar = {};
+
                 } else {
                     await uploadData();
                 }
-                if (!isUserTyping) refreshUI();
+                
+                if (!isUserTyping) {
+                    if (!isUnlocked) renderGateTeachers();
+                    else refreshActivePanel();
+                }
             } catch (err) {
                 console.warn("Bulut eşleşemedi. Yerel hafıza devrede.", err);
                 loadFromLocalStorage();
@@ -413,19 +509,18 @@
         }
 
         function loadFromLocalStorage() {
-            const localData = localStorage.getItem('ilkikra_bireysel_backup');
+            const localData = localStorage.getItem('ilkikra_medrese_backup');
             if (localData) {
                 try { systemData = JSON.parse(localData); } catch(e) {}
             }
-            if (!isUserTyping) refreshUI();
-        }
-
-        function saveToLocalStorage() {
-            localStorage.setItem('ilkikra_bireysel_backup', JSON.stringify(systemData));
+            if (!isUserTyping) {
+                if (!isUnlocked) renderGateTeachers();
+                else refreshActivePanel();
+            }
         }
 
         async function uploadData() {
-            saveToLocalStorage();
+            localStorage.setItem('ilkikra_medrese_backup', JSON.stringify(systemData));
             try {
                 await fetch(`${DB_URL}.json`, {
                     method: 'PUT',
@@ -435,51 +530,287 @@
             } catch(e) {}
         }
 
+        // --- GİRİŞ & OTURUM (GATE) ---
         function checkSavedSession() {
-            if (localStorage.getItem('ilkikra_bireysel_unlocked') === 'true') {
-                isUnlocked = true; showPanelScreen();
-            } else { showGateScreen(); }
+            const role = localStorage.getItem('ilkikra_role');
+            const tid = localStorage.getItem('ilkikra_tid');
+            if (role) {
+                isUnlocked = true;
+                currentRole = role;
+                currentTeacherId = tid;
+                showPanelScreen();
+            } else {
+                renderGateTeachers();
+                showGateScreen();
+            }
         }
 
-        function checkGatePassword() {
-            const inputVal = document.getElementById('gatePasswordInput').value.trim();
-            const correctPass = systemData.sistem_ayarlari.gatePassword || "9876";
+        function renderGateTeachers() {
+            const select = document.getElementById('teacherSelectDropdown');
+            if(!select) return;
+            select.innerHTML = '<option value="" disabled selected>Kendi İsminizi Seçin...</option>';
+            
+            const hocalar = systemData.hocalar || {};
+            Object.keys(hocalar).forEach(hId => {
+                const opt = document.createElement('option');
+                opt.value = hId;
+                opt.innerText = hocalar[hId].isim;
+                select.appendChild(opt);
+            });
+        }
 
-            if (inputVal === correctPass) {
+        function checkTeacherLogin() {
+            const select = document.getElementById('teacherSelectDropdown');
+            const pwdInput = document.getElementById('gatePasswordInput').value.trim();
+            const hId = select.value;
+
+            if (!hId) {
+                document.getElementById('gateErrorMsg').innerText = "Lütfen hoca isminizi seçin.";
+                document.getElementById('gateErrorMsg').classList.remove('hidden');
+                return;
+            }
+
+            const hoca = systemData.hocalar[hId];
+            if (hoca && hoca.sifre === pwdInput) {
                 isUnlocked = true;
+                currentRole = 'teacher';
+                currentTeacherId = hId;
                 if (document.getElementById('rememberMeCheck').checked) {
-                    localStorage.setItem('ilkikra_bireysel_unlocked', 'true');
+                    localStorage.setItem('ilkikra_role', 'teacher');
+                    localStorage.setItem('ilkikra_tid', hId);
                 }
                 document.getElementById('gateErrorMsg').classList.add('hidden');
                 document.getElementById('gatePasswordInput').value = '';
                 showPanelScreen();
             } else {
+                document.getElementById('gateErrorMsg').innerText = "Hatalı şifre! Tekrar deneyin.";
                 document.getElementById('gateErrorMsg').classList.remove('hidden');
             }
         }
 
-        function forgetPassword() {
-            isUnlocked = false;
-            localStorage.removeItem('ilkikra_bireysel_unlocked');
-            showGateScreen();
+        // --- YÖNETİCİ (ADMIN) GİRİŞİ ---
+        function openAdminLoginModal() {
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminLoginErrorMsg').classList.add('hidden');
+            document.getElementById('adminLoginModal').classList.remove('hidden');
+        }
+        function closeAdminLoginModal() { document.getElementById('adminLoginModal').classList.add('hidden'); }
+        
+        function checkAdminPassword() {
+            const input = document.getElementById('adminPasswordInput').value;
+            const realPwd = systemData.sistem_ayarlari.adminPassword || "İLK İKRA";
+            
+            if (input === realPwd) {
+                isUnlocked = true;
+                currentRole = 'admin';
+                closeAdminLoginModal();
+                showPanelScreen();
+            } else {
+                document.getElementById('adminLoginErrorMsg').classList.remove('hidden');
+            }
         }
 
+        function logout() {
+            isUnlocked = false;
+            currentRole = null;
+            currentTeacherId = null;
+            localStorage.removeItem('ilkikra_role');
+            localStorage.removeItem('ilkikra_tid');
+            showGateScreen();
+            renderGateTeachers();
+        }
+
+        // --- EKRAN GEÇİŞLERİ ---
         function showGateScreen() {
             document.getElementById('gateScreen').classList.remove('hidden');
             document.getElementById('mainPanel').classList.add('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
         }
 
         function showPanelScreen() {
             document.getElementById('gateScreen').classList.add('hidden');
-            document.getElementById('mainPanel').classList.remove('hidden');
-            refreshUI();
+            if (currentRole === 'admin') {
+                document.getElementById('mainPanel').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                renderAdminPanel();
+            } else {
+                document.getElementById('adminPanel').classList.add('hidden');
+                document.getElementById('mainPanel').classList.remove('hidden');
+                const hoca = systemData.hocalar[currentTeacherId];
+                if(hoca) document.getElementById('teacherPanelTitle').innerHTML = `<i class="fa-solid fa-graduation-cap text-medrese-emerald"></i> <span>${hoca.isim} Paneli</span>`;
+                selectedStudentId = null;
+                refreshUI();
+            }
+        }
+
+        function refreshActivePanel() {
+            if (!isUnlocked) return;
+            if (currentRole === 'admin') renderAdminPanel();
+            else if (currentRole === 'teacher') refreshUI();
+        }
+
+
+        // 👑 YÖNETİCİ FONKSİYONLARI 
+        function renderAdminPanel() {
+            const hocalar = systemData.hocalar || {};
+            const keys = Object.keys(hocalar);
+
+            // 1. Hoca Listesi Çizimi
+            const tList = document.getElementById('adminTeacherList');
+            tList.innerHTML = '';
+            if (keys.length === 0) {
+                tList.innerHTML = '<div class="text-xs text-slate-500 py-4 text-center">Sistemde kayıtlı hoca bulunamadı.</div>';
+            } else {
+                keys.forEach(hId => {
+                    const hoca = hocalar[hId];
+                    const row = document.createElement('div');
+                    row.className = "flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm";
+                    row.innerHTML = `
+                        <div class="font-bold text-sm text-slate-800">${hoca.isim}</div>
+                        <div class="flex gap-1.5">
+                            <button onclick="openChangeTeacherPwd('${hId}')" class="bg-amber-50 hover:bg-amber-100 text-amber-600 text-[10px] font-bold px-2 py-1.5 rounded-lg transition" title="Şifre Değiştir"><i class="fa-solid fa-key"></i></button>
+                            <button onclick="confirmDeleteTeacher('${hId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1.5 rounded-lg transition" title="Hocayı Sil"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    `;
+                    tList.appendChild(row);
+                });
+            }
+
+            // 2. Sınıf Raporları Çizimi
+            const overviewList = document.getElementById('adminOverviewList');
+            overviewList.innerHTML = '';
+            
+            let globalExpected = 0;
+            let globalPaid = 0;
+
+            if (keys.length === 0) {
+                overviewList.innerHTML = '<div class="text-xs text-slate-500 py-4 text-center">Raporlanacak veri yok.</div>';
+            } else {
+                keys.forEach(hId => {
+                    const hoca = hocalar[hId];
+                    const ogrenciler = hoca.ogrenciler || {};
+                    const stKeys = Object.keys(ogrenciler);
+                    
+                    let hocaExpected = 0;
+                    let hocaPaid = 0;
+                    
+                    let studentHtml = `<div class="space-y-1 mt-2 pl-2 border-l-2 border-slate-100 hidden" id="admin_st_list_${hId}">`;
+                    
+                    if (stKeys.length === 0) {
+                        studentHtml += `<p class="text-[10px] text-slate-400 italic py-1">Kayıtlı talebe yok.</p>`;
+                    } else {
+                        stKeys.forEach(stId => {
+                            const st = ogrenciler[stId];
+                            const fee = parseFloat(st.ucret) || 0;
+                            hocaExpected += fee;
+                            
+                            const cellKey = `${new Date().getFullYear()}-${adminFilterMonth}`;
+                            const isPaid = adminFilterMonth !== 7 && st.odemeler && st.odemeler[cellKey] === true;
+                            if(isPaid) hocaPaid += fee;
+                            
+                            let statIcon = isPaid ? '<i class="fa-solid fa-check text-emerald-500"></i>' : (adminFilterMonth === 7 ? '<i class="fa-solid fa-sun text-amber-500"></i>' : '<i class="fa-solid fa-xmark text-rose-400"></i>');
+                            
+                            studentHtml += `
+                                <div class="flex justify-between items-center bg-slate-50 p-2 rounded-lg text-[11px] border border-slate-100">
+                                    <span class="font-semibold text-slate-700">${st.ad}</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-slate-500">${formatCurrency(fee)}</span>
+                                        ${statIcon}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                    studentHtml += `</div>`;
+                    
+                    globalExpected += hocaExpected;
+                    globalPaid += hocaPaid;
+
+                    const card = document.createElement('div');
+                    card.className = "bg-white border border-slate-200 rounded-xl p-3 shadow-sm";
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center cursor-pointer" onclick="document.getElementById('admin_st_list_${hId}').classList.toggle('hidden')">
+                            <div class="font-bold text-sm text-medrese-accent flex items-center gap-2">
+                                <i class="fa-solid fa-chalkboard-user"></i> ${hoca.isim}
+                            </div>
+                            <div class="flex items-center gap-3 text-[10px] font-bold">
+                                <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded-md" title="Öğrenci Sayısı"><i class="fa-solid fa-users"></i> ${stKeys.length}</span>
+                                <span class="bg-emerald-50 border border-emerald-100 text-emerald-700 px-2 py-1 rounded-md" title="Toplanan / Beklenen">${formatCurrency(hocaPaid)} / ${formatCurrency(hocaExpected)}</span>
+                                <i class="fa-solid fa-chevron-down text-slate-400"></i>
+                            </div>
+                        </div>
+                        ${studentHtml}
+                    `;
+                    overviewList.appendChild(card);
+                });
+            }
+
+            document.getElementById('adminTotalExpected').innerText = adminFilterMonth === 7 ? "0 ₺" : formatCurrency(globalExpected);
+            document.getElementById('adminTotalPaid').innerText = adminFilterMonth === 7 ? "0 ₺" : formatCurrency(globalPaid);
+        }
+
+        function changeAdminFilterMonth(val) { adminFilterMonth = parseInt(val); renderAdminPanel(); }
+
+        function addTeacher() {
+            const name = document.getElementById('newTeacherNameInput').value.trim();
+            if(!name) return;
+            const hId = 'hoca_' + Date.now();
+            if(!systemData.hocalar) systemData.hocalar = {};
+            systemData.hocalar[hId] = { isim: name, sifre: '9876', ogrenciler: {} };
+            document.getElementById('newTeacherNameInput').value = '';
+            uploadData(); renderAdminPanel();
+        }
+
+        function confirmDeleteTeacher(hId) {
+            const hoca = systemData.hocalar[hId];
+            confirmActionCallback = () => {
+                delete systemData.hocalar[hId];
+                uploadData(); renderAdminPanel(); closeConfirmModal();
+            };
+            document.getElementById('confirmMessage').innerHTML = `<b>${hoca.isim}</b> adlı hocayı ve tüm sınıfını silmek istediğinize emin misiniz?`;
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function openChangeTeacherPwd(hId) {
+            editingTeacherPwdId = hId;
+            document.getElementById('changeTeacherPwdTitle').innerText = `${systemData.hocalar[hId].isim} Şifresi Değiş`;
+            document.getElementById('newTeacherPwdInput').value = '';
+            document.getElementById('changeTeacherPwdModal').classList.remove('hidden');
+        }
+        function closeChangeTeacherPwdModal() { document.getElementById('changeTeacherPwdModal').classList.add('hidden'); }
+        function executeChangeTeacherPwd() {
+            const pwd = document.getElementById('newTeacherPwdInput').value.trim();
+            if(!pwd) return;
+            systemData.hocalar[editingTeacherPwdId].sifre = pwd;
+            uploadData(); closeChangeTeacherPwdModal();
+            showInfoModal("<i class='fa-solid fa-check text-emerald-500'></i>", "Başarılı", "Hoca şifresi güncellendi.");
+        }
+
+        function openChangeAdminPasswordModal() {
+            document.getElementById('newAdminPwdInput').value = '';
+            document.getElementById('changeAdminPwdModal').classList.remove('hidden');
+        }
+        function closeChangeAdminPwdModal() { document.getElementById('changeAdminPwdModal').classList.add('hidden'); }
+        function executeChangeAdminPwd() {
+            const pwd = document.getElementById('newAdminPwdInput').value.trim();
+            if(!pwd) return;
+            systemData.sistem_ayarlari.adminPassword = pwd;
+            uploadData(); closeChangeAdminPwdModal();
+            showInfoModal("<i class='fa-solid fa-check text-emerald-500'></i>", "Başarılı", "Yönetici şifresi güncellendi.");
+        }
+
+
+        // 👤 BİREYSEL HOCA FONKSİYONLARI
+        function getTeacherStudents() {
+            if(!currentTeacherId || !systemData.hocalar[currentTeacherId]) return {};
+            return systemData.hocalar[currentTeacherId].ogrenciler || {};
         }
 
         function refreshUI() {
-            if (!isUnlocked) return;
+            if (!isUnlocked || currentRole !== 'teacher') return;
 
             try {
-                const students = systemData.ogrenciler || {};
+                const students = getTeacherStudents();
                 let keys = Object.keys(students).filter(k => students[k] && students[k].ad);
 
                 document.getElementById('studentCountBadge').innerText = keys.length;
@@ -505,7 +836,6 @@
                     document.getElementById('classTotalPaid').innerText = selectedFilterMonth === 7 ? "0 ₺" : formatCurrency(classPaid);
                     document.getElementById('classTotalPending').innerText = selectedFilterMonth === 7 ? "0 ₺" : formatCurrency(classPending);
                 }
-                /* -------------------------------------------------------- */
 
                 if (currentFilterStatus !== 'all') {
                     keys = keys.filter(stId => {
@@ -559,19 +889,16 @@
                 const placeholder = document.getElementById('noDataPlaceholder');
                 const content = document.getElementById('calendarContent');
 
-                // Önceki hatanın düzeltildiği (remove yerine classList.remove) ve classList.add kullanıldığı yer:
                 if (selectedStudentId && students[selectedStudentId]) {
                     placeholder.classList.add('hidden');
                     content.classList.remove('hidden');
-                    
                     renderYearTabs();
                     renderCalendar();
                 } else {
                     selectedStudentId = null;
-                    placeholder.classList.remove('hidden'); // BURASI DÜZELTİLDİ
+                    placeholder.classList.remove('hidden');
                     content.classList.add('hidden');
                 }
-
             } catch (err) {
                 console.error("UI Yenileme Hatası:", err);
             }
@@ -580,17 +907,10 @@
         function selectStudent(stId) {
             selectedStudentId = stId;
             refreshUI();
-            if (window.innerWidth < 1024) {
-                setTimeout(() => {
-                    const target = document.getElementById('calendarPanel');
-                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 150);
-            }
+            if (window.innerWidth < 1024) setTimeout(() => { const t=document.getElementById('calendarPanel'); if(t)t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
         }
 
-        function changeFilterMonth(val) {
-            selectedFilterMonth = parseInt(val); refreshUI();
-        }
+        function changeFilterMonth(val) { selectedFilterMonth = parseInt(val); refreshUI(); }
 
         function setFilterStatus(status) {
             currentFilterStatus = status;
@@ -605,7 +925,6 @@
             const container = document.getElementById('yearTabsContainer');
             if (!container) return;
             container.innerHTML = '';
-
             for (let yr = START_YEAR; yr <= END_YEAR; yr++) {
                 const tab = document.createElement('button');
                 tab.className = `px-3 py-1.5 rounded-xl font-bold text-xs whitespace-nowrap transition ${yr === selectedYear ? 'bg-medrese-accent text-white shadow-md shadow-emerald-900/10' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'}`;
@@ -616,13 +935,10 @@
         }
 
         function renderCalendar() {
-            const students = systemData.ogrenciler || {};
-            const st = students[selectedStudentId];
+            const st = getTeacherStudents()[selectedStudentId];
             if (!st) return;
-
             const grid = document.getElementById('paymentGrid');
             grid.innerHTML = '';
-
             MONTHS.forEach((m, idx) => {
                 const cellKey = `${selectedYear}-${idx}`;
                 const isAugust = (idx === 7); 
@@ -631,29 +947,18 @@
                 const cell = document.createElement('div');
                 if (isAugust) {
                     cell.className = "cell opacity-60 cursor-not-allowed bg-slate-50 border-dashed border-slate-300";
-                    cell.innerHTML = `
-                        <span class="text-xs font-bold text-slate-400">${m}</span>
-                        <span class="text-[9px] text-amber-500 mt-1 uppercase font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-sun"></i> TATİL
-                        </span>
-                    `;
+                    cell.innerHTML = `<span class="text-xs font-bold text-slate-400">${m}</span><span class="text-[9px] text-amber-500 mt-1 uppercase font-bold flex items-center gap-1"><i class="fa-solid fa-sun"></i> TATİL</span>`;
                 } else {
                     cell.className = `cell ${isPaid ? 'paid' : ''}`;
                     cell.onclick = () => togglePayment(cellKey);
-                    cell.innerHTML = `
-                        <span class="text-xs font-bold ${isPaid ? 'text-emerald-700' : 'text-slate-600'}">${m}</span>
-                        <span class="text-[9px] flex items-center gap-1 mt-1 ${isPaid ? 'text-emerald-600 font-bold' : 'text-slate-400 font-medium'}">
-                            <i class="fa-solid ${isPaid ? 'fa-circle-check' : 'fa-circle-notch'}"></i>
-                            ${isPaid ? 'ÖDENDİ' : 'BEKLİYOR'}
-                        </span>
-                    `;
+                    cell.innerHTML = `<span class="text-xs font-bold ${isPaid ? 'text-emerald-700' : 'text-slate-600'}">${m}</span><span class="text-[9px] flex items-center gap-1 mt-1 ${isPaid ? 'text-emerald-600 font-bold' : 'text-slate-400 font-medium'}"><i class="fa-solid ${isPaid ? 'fa-circle-check' : 'fa-circle-notch'}"></i>${isPaid ? 'ÖDENDİ' : 'BEKLİYOR'}</span>`;
                 }
                 grid.appendChild(cell);
             });
         }
 
         function togglePayment(cellKey) {
-            const st = systemData.ogrenciler[selectedStudentId];
+            const st = getTeacherStudents()[selectedStudentId];
             if (!st) return;
             if (!st.odemeler) st.odemeler = {};
             st.odemeler[cellKey] = !st.odemeler[cellKey];
@@ -671,9 +976,9 @@
 
         function openEditStudentModal(stId) {
             editingStudentId = stId;
-            const st = systemData.ogrenciler[stId];
+            const st = getTeacherStudents()[stId];
             if (!st) return;
-            document.getElementById('studentModalTitle').innerText = "Talebe Bilgilerini Güncelle";
+            document.getElementById('studentModalTitle').innerText = "Talebe Güncelle";
             document.getElementById('studentNameInput').value = st.ad || '';
             document.getElementById('studentFeeInput').value = st.ucret || '';
             document.getElementById('studentPhoneInput').value = st.veli_tel || '';
@@ -688,46 +993,43 @@
             const fee = parseFloat(document.getElementById('studentFeeInput').value) || 0;
             const phone = document.getElementById('studentPhoneInput').value.trim();
 
-            if (!systemData.ogrenciler) systemData.ogrenciler = {};
+            if(!systemData.hocalar[currentTeacherId].ogrenciler) systemData.hocalar[currentTeacherId].ogrenciler = {};
+            const ogrs = systemData.hocalar[currentTeacherId].ogrenciler;
 
-            if (editingStudentId) {
-                if (systemData.ogrenciler[editingStudentId]) {
-                    systemData.ogrenciler[editingStudentId].ad = name;
-                    systemData.ogrenciler[editingStudentId].ucret = fee;
-                    systemData.ogrenciler[editingStudentId].veli_tel = phone;
-                }
+            if (editingStudentId && ogrs[editingStudentId]) {
+                ogrs[editingStudentId].ad = name;
+                ogrs[editingStudentId].ucret = fee;
+                ogrs[editingStudentId].veli_tel = phone;
             } else {
                 const newId = 'st_' + Date.now();
-                systemData.ogrenciler[newId] = { ad: name, ucret: fee, veli_tel: phone, odemeler: {} };
+                ogrs[newId] = { ad: name, ucret: fee, veli_tel: phone, odemeler: {} };
                 selectedStudentId = newId;
             }
             uploadData(); closeStudentModal(); refreshUI();
         }
 
         function deleteStudent(stId) {
-            const st = systemData.ogrenciler[stId];
+            const st = getTeacherStudents()[stId];
             if (!st) return;
             confirmActionCallback = () => {
-                delete systemData.ogrenciler[stId];
+                delete systemData.hocalar[currentTeacherId].ogrenciler[stId];
                 if (selectedStudentId === stId) selectedStudentId = null;
                 uploadData(); refreshUI(); closeConfirmModal();
             };
-            document.getElementById('confirmMessage').innerText = `"${st.ad}" isimli talebeyi sınıfınızdan silmek istediğinize emin misiniz?`;
+            document.getElementById('confirmMessage').innerText = `"${st.ad}" isimli talebeyi silmek istediğinize emin misiniz?`;
             document.getElementById('confirmModal').classList.remove('hidden');
         }
 
         function openWpModal() {
-            const students = systemData.ogrenciler || {};
+            const students = getTeacherStudents();
             const keys = Object.keys(students).filter(k => students[k] && students[k].ad);
             const listEl = document.getElementById('wpModalStudentList');
             listEl.innerHTML = '';
-
             if (keys.length === 0) {
                 listEl.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs font-medium">Sınıfınızda kayıtlı öğrenci yok.</div>`;
             } else {
                 keys.forEach(stId => {
                     const student = students[stId];
-                    const phoneVal = student.veli_tel || '';
                     const row = document.createElement('div');
                     row.className = "flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 gap-2";
                     row.innerHTML = `
@@ -736,14 +1038,10 @@
                             <p class="text-[9px] text-slate-500 mt-0.5">Aidat: <span class="text-emerald-600 font-bold">${formatCurrency(student.ucret || 0)}</span></p>
                         </div>
                         <div class="flex items-center gap-1.5 flex-shrink-0" onclick="event.stopPropagation();">
-                            <input type="text" placeholder="Telefon No" value="${phoneVal}" 
-                                   onfocus="isUserTyping = true;"
-                                   onblur="isUserTyping = false; saveWpPhone('${stId}', this.value)" 
+                            <input type="text" placeholder="Telefon No" value="${student.veli_tel || ''}" 
+                                   onfocus="isUserTyping = true;" onblur="isUserTyping = false; saveWpPhone('${stId}', this.value)" 
                                    class="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[11px] text-slate-800 focus:outline-none focus:border-emerald-400 w-[140px] text-center transition">
-                            
-                            <button onclick="sendWpMessage('${stId}')" class="bg-emerald-500 hover:bg-emerald-600 text-white p-2 rounded-lg flex items-center justify-center transition shadow-sm">
-                                <i class="fa-brands fa-whatsapp text-sm"></i>
-                            </button>
+                            <button onclick="sendWpMessage('${stId}')" class="bg-emerald-500 hover:bg-emerald-600 text-white p-2 rounded-lg flex items-center justify-center transition shadow-sm"><i class="fa-brands fa-whatsapp text-sm"></i></button>
                         </div>
                     `;
                     listEl.appendChild(row);
@@ -751,75 +1049,51 @@
             }
             document.getElementById('wpModal').classList.remove('hidden');
         }
-
         function closeWpModal() { document.getElementById('wpModal').classList.add('hidden'); refreshUI(); }
-        function saveWpPhone(stId, val) { if (systemData.ogrenciler[stId]) { systemData.ogrenciler[stId].veli_tel = val.trim(); uploadData(); } }
-
+        function saveWpPhone(stId, val) { if (systemData.hocalar[currentTeacherId].ogrenciler[stId]) { systemData.hocalar[currentTeacherId].ogrenciler[stId].veli_tel = val.trim(); uploadData(); } }
+        
         function sendWpMessage(stId) {
-            const student = systemData.ogrenciler[stId];
+            const student = getTeacherStudents()[stId];
             if (!student) return;
             let cleanPhone = (student.veli_tel || "").replace(/\s+/g, '').replace(/[^0-9]/g, '');
-            if (!cleanPhone) { showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Numara Eksik!", "Lütfen önce velinin numarasını kaydedin."); return; }
+            if (!cleanPhone) { showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Numara Eksik!", "Veli numarası yok."); return; }
             if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) cleanPhone = '90' + cleanPhone;
-            const textMsg = `İlkikra Medresesi: ${student.ad} isimli talebemizin ${MONTHS[selectedFilterMonth]} ayı aidat ücreti ödenmiştir. Teşekkür ederiz.`;
-            window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(textMsg)}`, '_blank');
+            window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(`İlkikra Medresesi: ${student.ad} isimli talebemizin ${MONTHS[selectedFilterMonth]} ayı aidatı ödenmiştir. Teşekkür ederiz.`)}`, '_blank');
         }
 
         function openBulkWpModal() {
             const listEl = document.getElementById('bulkWpList');
             listEl.innerHTML = '';
-            document.getElementById('bulkWpMessageInput').value = `İlkikra Medresesi: Saygıdeğer velimiz, öğrencimizin aidat ve medrese durumları güncellenmiştir. Bilgilerinize sunar, hayırlı günler dileriz.`;
-            
-            const students = systemData.ogrenciler || {};
+            document.getElementById('bulkWpMessageInput').value = `İlkikra Medresesi: Saygıdeğer velimiz, durum güncellenmiştir.`;
+            const students = getTeacherStudents();
             const keys = Object.keys(students).filter(k => students[k] && students[k].ad);
-
-            if (keys.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-4 text-slate-500 text-xs font-medium">Sınıfınızda kayıtlı öğrenci yok.</div>`;
-            } else {
-                keys.forEach(stId => {
-                    const student = students[stId];
-                    const rawPhone = student.veli_tel || '';
-                    const row = document.createElement('div');
-                    row.className = "flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs";
-                    row.innerHTML = `
-                        <div class="text-left">
-                            <p class="font-bold text-slate-800">${student.ad}</p>
-                            <p class="text-[10px] text-slate-500 font-medium">Veli: ${rawPhone || 'Kayıtlı Değil ❌'}</p>
-                        </div>
-                        <button onclick="sendBulkWpIndividual('${rawPhone}')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[10px] py-1.5 px-3 rounded-lg flex items-center gap-1 transition shadow-sm">
-                            <i class="fa-brands fa-whatsapp text-sm"></i> Gönder
-                        </button>
-                    `;
-                    listEl.appendChild(row);
-                });
-            }
+            if (keys.length === 0) listEl.innerHTML = `<div class="text-center py-4 text-slate-500 text-xs font-medium">Sınıfınızda kayıtlı öğrenci yok.</div>`;
+            else keys.forEach(stId => {
+                const student = students[stId];
+                const rawPhone = student.veli_tel || '';
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs";
+                row.innerHTML = `<div class="text-left"><p class="font-bold text-slate-800">${student.ad}</p><p class="text-[10px] text-slate-500 font-medium">Veli: ${rawPhone || 'Yok'}</p></div><button onclick="sendBulkWpIndividual('${rawPhone}')" class="bg-emerald-500 text-white font-bold text-[10px] py-1.5 px-3 rounded-lg"><i class="fa-brands fa-whatsapp text-sm"></i> Gönder</button>`;
+                listEl.appendChild(row);
+            });
             document.getElementById('bulkWpModal').classList.remove('hidden');
         }
-
         function closeBulkWpModal() { document.getElementById('bulkWpModal').classList.add('hidden'); }
-
         function sendBulkWpIndividual(rawPhone) {
             let cleanPhone = rawPhone.replace(/\s+/g, '').replace(/[^0-9]/g, '');
-            if (!cleanPhone) { showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Numara Eksik!", "Telefon numarası bulunamadı."); return; }
+            if (!cleanPhone) { showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Hata", "Telefon yok."); return; }
             if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) cleanPhone = '90' + cleanPhone;
             const customMsg = document.getElementById('bulkWpMessageInput').value.trim();
-            if (!customMsg) { showInfoModal("<i class='fa-solid fa-pen-clip text-amber-500'></i>", "Mesaj Boş!", "Lütfen gönderilecek ortak mesajı yazın."); return; }
+            if (!customMsg) return;
             window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(customMsg)}`, '_blank');
         }
 
-        function showInfoModal(iconHtml, title, msg) {
-            document.getElementById('infoModalIcon').innerHTML = iconHtml;
-            document.getElementById('infoModalTitle').innerText = title;
-            document.getElementById('infoModalMsg').innerText = msg;
-            document.getElementById('infoModal').classList.remove('hidden');
-        }
+        function showInfoModal(iconHtml, title, msg) { document.getElementById('infoModalIcon').innerHTML = iconHtml; document.getElementById('infoModalTitle').innerText = title; document.getElementById('infoModalMsg').innerText = msg; document.getElementById('infoModal').classList.remove('hidden'); }
         function closeInfoModal() { document.getElementById('infoModal').classList.add('hidden'); }
         function closeConfirmModal() { document.getElementById('confirmModal').classList.add('hidden'); confirmActionCallback = null; }
         function executeConfirmedDelete() { if (confirmActionCallback) confirmActionCallback(); }
         
-        function formatCurrency(val) {
-            return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(parseFloat(val) || 0);
-        }
+        function formatCurrency(val) { return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(parseFloat(val) || 0); }
     </script>
 </body>
 </html>
