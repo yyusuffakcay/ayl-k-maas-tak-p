@@ -19,11 +19,11 @@
                 extend: {
                     colors: {
                         medrese: {
-                            deep: '#022c22',    /* Koyu Zümrüt Yeşili */
-                            emerald: '#064e3b', /* Zümrüt Yeşili */
-                            light: '#0f766e',   /* Canlı Su Yeşili */
-                            accent: '#d4af37',  /* Hakiki Altın Sarısı */
-                            goldLight: '#f3e5ab'/* Açık Altın */
+                            deep: '#f8fafc',    /* Açık Arka Plan */
+                            emerald: '#059669', /* Zümrüt Yeşili (Butonlar) */
+                            light: '#ecfdf5',   /* Çok Açık Yeşil (Aktif Kartlar) */
+                            accent: '#064e3b',  /* Koyu Yeşil (Başlıklar/Yazılar) */
+                            gold: '#d97706'     /* Kehribar (Dikkat çeken detaylar) */
                         }
                     },
                     fontFamily: {
@@ -41,14 +41,14 @@
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(2, 44, 34, 0.3);
+            background: rgba(241, 245, 249, 1);
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.4);
+            background: rgba(16, 185, 129, 0.3);
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(212, 175, 55, 0.7);
+            background: rgba(16, 185, 129, 0.6);
         }
         
         .no-scrollbar::-webkit-scrollbar {
@@ -60,44 +60,46 @@
         }
         
         body {
-            background-image: linear-gradient(rgba(2, 20, 15, 0.94), rgba(2, 20, 15, 0.94)), 
-                              url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80');
+            /* Ferah, aydınlık bir arka plan görseli ve üzerine beyaz örtü */
+            background-image: linear-gradient(rgba(248, 250, 252, 0.92), rgba(248, 250, 252, 0.92)), 
+                              url('https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
 
         .glass-card {
-            background: rgba(6, 78, 59, 0.45);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
         }
 
         .member-card {
             padding: 12px;
-            background: rgba(255, 255, 255, 0.03);
+            background: #ffffff;
             border-radius: 12px;
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid rgba(212, 175, 55, 0.1);
+            border: 1px solid #e2e8f0;
             cursor: pointer;
             transition: all 0.2s ease;
         }
         .member-card:hover {
-            border-color: rgba(212, 175, 55, 0.4);
-            background: rgba(212, 175, 55, 0.05);
+            border-color: #34d399;
+            background: #f0fdf4;
         }
         .member-card.active {
-            background: rgba(212, 175, 55, 0.15);
-            border-color: #d4af37;
-            box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+            background: #ecfdf5;
+            border-color: #10b981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
         }
 
         .cell {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(212, 175, 55, 0.1);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
@@ -110,89 +112,90 @@
             min-height: 65px;
         }
         .cell:hover {
-            border-color: rgba(212, 175, 55, 0.4);
-            background: rgba(212, 175, 55, 0.05);
+            border-color: #34d399;
+            background: #f0fdf4;
             transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         .cell.paid {
-            background: rgba(16, 185, 129, 0.1);
+            background: #ecfdf5;
             border-color: #10b981;
-            box-shadow: inset 0 0 12px rgba(16, 185, 129, 0.1);
         }
     </style>
 </head>
-<body class="font-sans text-slate-100 min-h-screen p-3 sm:p-6 flex flex-col items-center justify-center">
+<body class="font-sans text-slate-800 min-h-screen p-3 sm:p-6 flex flex-col items-center justify-center">
 
     <!-- 🚪 1. GÜVENLİK GİRİŞ KAPISI -->
-    <div id="gateScreen" class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center gap-6">
-        <div class="text-medrese-accent text-5xl sm:text-6xl animate-pulse">
+    <div id="gateScreen" class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center gap-6">
+        <div class="text-medrese-emerald text-5xl sm:text-6xl animate-pulse drop-shadow-md">
             <i class="fa-solid fa-mosque"></i>
         </div>
         <div>
             <h2 class="font-serif text-xl sm:text-2xl font-bold text-medrese-accent">GÜVENLİK GİRİŞİ</h2>
-            <p class="text-xs text-slate-400 mt-1">İlkikra Medresesi Bireysel Paneline Giriş İçin Şifreyi Yazın</p>
+            <p class="text-xs text-slate-500 mt-1">İlkikra Medresesi Bireysel Paneline Giriş İçin Şifreyi Yazın</p>
         </div>
         <div class="w-full space-y-4">
             <div>
-                <input type="password" id="gatePasswordInput" placeholder="Şifre (Varsayılan: 9876)" class="w-full text-center tracking-widest bg-black/40 border border-medrese-accent/30 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-medrese-accent">
-                <span id="gateErrorMsg" class="text-rose-400 text-xs mt-1 block hidden"><i class="fa-solid fa-triangle-exclamation"></i> Hatalı Şifre! Tekrar Deneyin.</span>
+                <input type="password" id="gatePasswordInput" placeholder="Şifre (Varsayılan: 9876)" class="w-full text-center tracking-widest bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition">
+                <span id="gateErrorMsg" class="text-rose-500 text-xs mt-1 block hidden font-medium"><i class="fa-solid fa-triangle-exclamation"></i> Hatalı Şifre! Tekrar Deneyin.</span>
             </div>
-            <div class="flex items-center justify-center text-xs text-slate-400 gap-2">
-                <input type="checkbox" id="rememberMeCheck" checked class="accent-medrese-accent w-4 h-4 rounded">
-                <label for="rememberMeCheck" class="cursor-pointer">Şifremi hatırla, bir daha sorma ✅</label>
+            <div class="flex items-center justify-center text-xs text-slate-500 gap-2 font-medium">
+                <input type="checkbox" id="rememberMeCheck" checked class="accent-medrese-emerald w-4 h-4 rounded">
+                <label for="rememberMeCheck" class="cursor-pointer hover:text-slate-700 transition">Şifremi hatırla, bir daha sorma ✅</label>
             </div>
-            <button onclick="checkGatePassword()" class="w-full bg-medrese-accent text-medrese-deep font-bold text-sm py-3 rounded-xl hover:bg-amber-600 transition shadow-lg shadow-medrese-accent/10">Sisteme Giriş Yap</button>
+            <button onclick="checkGatePassword()" class="w-full bg-medrese-emerald text-white font-bold text-sm py-3 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-600/20">Sisteme Giriş Yap</button>
         </div>
     </div>
 
     <!-- 👤 2. BİREYSEL SINIF ÇALIŞMA ALANI -->
-    <div id="mainPanel" class="w-full max-w-[1200px] glass-card rounded-3xl shadow-2xl p-4 sm:p-6 flex flex-col gap-6 hidden">
-        <header class="flex flex-col sm:flex-row justify-between items-center pb-5 border-b border-medrese-accent/20 gap-3">
+    <div id="mainPanel" class="w-full max-w-[1200px] glass-card rounded-3xl p-4 sm:p-6 flex flex-col gap-6 hidden">
+        <header class="flex flex-col sm:flex-row justify-between items-center pb-5 border-b border-slate-200 gap-3">
             <div class="logo-area text-center sm:text-left">
                 <h1 class="font-serif text-lg sm:text-xl font-bold text-medrese-accent flex items-center gap-2 justify-center sm:justify-start">
-                    <i class="fa-solid fa-graduation-cap"></i> <span>Yusuf Hoca Bireysel Paneli</span>
+                    <i class="fa-solid fa-graduation-cap text-medrese-emerald"></i> <span>Yusuf Hoca Bireysel Paneli</span>
                 </h1>
-                <p class="text-[11px] sm:text-xs text-slate-300 mt-1">Medrese Aidat &amp; Aylık Maaş Takip Masası (Bireysel ✅)</p>
+                <p class="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Medrese Aidat &amp; Aylık Maaş Takip Masası (Bireysel ✅)</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="forgetPassword()" class="bg-black/30 hover:bg-black/50 text-slate-300 border border-slate-600 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1">
+                <button onclick="forgetPassword()" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1 shadow-sm">
                     <i class="fa-solid fa-lock"></i> Şifreyi Unut
                 </button>
             </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6">
+            
             <!-- Sol Sütun: Talebeler -->
-            <div class="bg-medrese-deep/40 border border-medrese-accent/10 rounded-2xl p-4 flex flex-col h-auto min-h-[350px] lg:h-[580px] overflow-hidden">
-                <div class="flex justify-between items-center pb-3 border-b border-medrese-accent/10 mb-3 gap-2 flex-wrap">
-                    <h3 class="font-bold text-sm text-slate-300 flex items-center gap-2">
-                        Talebelerim <span id="studentCountBadge" class="bg-medrese-accent/20 text-medrese-accent text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+            <div class="bg-slate-50/50 border border-slate-200 rounded-2xl p-4 flex flex-col h-auto min-h-[350px] lg:h-[580px] overflow-hidden">
+                <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-3 gap-2 flex-wrap">
+                    <h3 class="font-bold text-sm text-slate-700 flex items-center gap-2">
+                        Talebelerim <span id="studentCountBadge" class="bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
                     </h3>
                     <div class="flex gap-1">
-                        <button onclick="openWpModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] py-1.5 px-2 rounded-lg flex items-center gap-1 transition">
+                        <button onclick="openWpModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] py-1.5 px-2 rounded-lg flex items-center gap-1 transition shadow-sm">
                             <i class="fa-brands fa-whatsapp"></i> Veli WP
                         </button>
-                        <button onclick="openBulkWpModal()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-[11px] py-1.5 px-2 rounded-lg flex items-center gap-1 transition">
+                        <button onclick="openBulkWpModal()" class="bg-amber-100 hover:bg-amber-200 text-amber-700 font-bold text-[11px] py-1.5 px-2 rounded-lg flex items-center gap-1 transition">
                             <i class="fa-solid fa-comments"></i> Toplu WP
                         </button>
-                        <button onclick="openAddStudentModal()" class="bg-medrese-accent hover:bg-amber-600 text-medrese-deep font-bold text-[11px] py-1.5 px-2 rounded-lg flex items-center gap-1 transition">
+                        <button onclick="openAddStudentModal()" class="bg-medrese-accent hover:bg-emerald-800 text-white font-bold text-[11px] py-1.5 px-2 rounded-lg flex items-center gap-1 transition shadow-sm">
                             <i class="fa-solid fa-plus"></i> Ekle
                         </button>
                     </div>
                 </div>
 
                 <!-- Ödeme Filtresi -->
-                <div class="bg-black/20 p-2.5 rounded-xl border border-medrese-accent/10 mb-3 space-y-2">
+                <div class="bg-white p-2.5 rounded-xl border border-slate-200 mb-3 space-y-2 shadow-sm">
                     <div class="flex items-center gap-2">
-                        <span class="text-[11px] text-slate-400 font-bold whitespace-nowrap">Takip Ayı:</span>
-                        <select id="filterMonthSelect" onchange="changeFilterMonth(this.value)" class="flex-grow bg-[#022c22] border border-medrese-accent/10 text-slate-100 text-[11px] rounded-lg px-2 py-1 focus:outline-none">
+                        <span class="text-[11px] text-slate-500 font-bold whitespace-nowrap">Takip Ayı:</span>
+                        <select id="filterMonthSelect" onchange="changeFilterMonth(this.value)" class="flex-grow bg-slate-50 border border-slate-200 text-slate-700 font-medium text-[11px] rounded-lg px-2 py-1.5 focus:outline-none focus:border-emerald-400">
                             <!-- JS ile Dolacak -->
                         </select>
                     </div>
                     <div class="grid grid-cols-3 gap-1">
-                        <button onclick="setFilterStatus('all')" id="filter-all" class="filter-btn bg-medrese-accent/10 border border-medrese-accent/20 text-medrese-accent text-[10px] font-bold py-1 rounded-lg active">Tümü</button>
-                        <button onclick="setFilterStatus('paid')" id="filter-paid" class="filter-btn bg-black/10 border border-transparent text-slate-400 text-[10px] font-bold py-1 rounded-lg">Ödeyen</button>
-                        <button onclick="setFilterStatus('unpaid')" id="filter-unpaid" class="filter-btn bg-black/10 border border-transparent text-slate-400 text-[10px] font-bold py-1 rounded-lg">Kalan</button>
+                        <button onclick="setFilterStatus('all')" id="filter-all" class="filter-btn bg-emerald-100 border border-emerald-300 text-emerald-700 text-[10px] font-bold py-1.5 rounded-lg active transition">Tümü</button>
+                        <button onclick="setFilterStatus('paid')" id="filter-paid" class="filter-btn bg-slate-50 border border-transparent text-slate-500 hover:bg-slate-100 text-[10px] font-bold py-1.5 rounded-lg transition">Ödeyen</button>
+                        <button onclick="setFilterStatus('unpaid')" id="filter-unpaid" class="filter-btn bg-slate-50 border border-transparent text-slate-500 hover:bg-slate-100 text-[10px] font-bold py-1.5 rounded-lg transition">Kalan</button>
                     </div>
                 </div>
 
@@ -203,15 +206,15 @@
             </div>
 
             <!-- Sağ Sütun: Takvim -->
-            <div id="calendarPanel" class="bg-medrese-deep/20 border border-medrese-accent/10 rounded-2xl p-4 flex flex-col justify-center min-h-[350px]">
-                <div id="noDataPlaceholder" class="flex flex-col items-center justify-center py-16 text-slate-500 gap-4">
-                    <i class="fa-solid fa-circle-user text-5xl text-medrese-accent/10 animate-pulse"></i>
-                    <p class="text-xs text-center">Ödemeleri ve takvimi yönetmek için sol taraftan bir talebeye tıklayın kanka.</p>
+            <div id="calendarPanel" class="bg-slate-50/50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-center min-h-[350px]">
+                <div id="noDataPlaceholder" class="flex flex-col items-center justify-center py-16 text-slate-400 gap-4">
+                    <i class="fa-solid fa-circle-user text-5xl text-emerald-100 animate-pulse"></i>
+                    <p class="text-xs text-center font-medium">Ödemeleri ve takvimi yönetmek için sol taraftan bir talebeye tıklayın.</p>
                 </div>
 
                 <div id="calendarContent" class="hidden flex-col gap-4">
                     <!-- Yıllar Şeridi -->
-                    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center border-b border-medrese-accent/10 pb-3 gap-3">
+                    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center border-b border-slate-200 pb-3 gap-3">
                         <div class="flex gap-1.5 overflow-x-auto whitespace-nowrap no-scrollbar pb-1 w-full" id="yearTabsContainer">
                             <!-- JS Dinamik -->
                         </div>
@@ -219,17 +222,17 @@
 
                     <!-- İstatistikler -->
                     <div class="grid grid-cols-3 gap-2">
-                        <div class="bg-black/20 border border-medrese-accent/5 rounded-xl p-2.5 text-center">
+                        <div class="bg-white border border-slate-200 rounded-xl p-2.5 text-center shadow-sm">
                             <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Planlanan (Eyl-Tem)</p>
-                            <h4 id="statExpected" class="text-xs sm:text-sm font-bold text-slate-300 mt-0.5">0 ₺</h4>
+                            <h4 id="statExpected" class="text-xs sm:text-sm font-extrabold text-slate-700 mt-0.5">0 ₺</h4>
                         </div>
-                        <div class="bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-2.5 text-center">
-                            <p class="text-[9px] text-emerald-500/70 font-bold uppercase tracking-wider font-semibold">Ödenen</p>
-                            <h4 id="statPaid" class="text-xs sm:text-sm font-bold text-emerald-400 mt-0.5">0 ₺</h4>
+                        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-2.5 text-center shadow-sm">
+                            <p class="text-[9px] text-emerald-600 font-bold uppercase tracking-wider">Ödenen</p>
+                            <h4 id="statPaid" class="text-xs sm:text-sm font-extrabold text-emerald-700 mt-0.5">0 ₺</h4>
                         </div>
-                        <div class="bg-rose-500/5 border border-rose-500/10 rounded-xl p-2.5 text-center">
-                            <p class="text-[9px] text-rose-500/70 font-bold uppercase tracking-wider font-semibold">Kalan</p>
-                            <h4 id="statPending" class="text-xs sm:text-sm font-bold text-rose-400 mt-0.5">0 ₺</h4>
+                        <div class="bg-rose-50 border border-rose-100 rounded-xl p-2.5 text-center shadow-sm">
+                            <p class="text-[9px] text-rose-600 font-bold uppercase tracking-wider">Kalan</p>
+                            <h4 id="statPending" class="text-xs sm:text-sm font-extrabold text-rose-700 mt-0.5">0 ₺</h4>
                         </div>
                     </div>
 
@@ -245,134 +248,121 @@
     <!-- 📋 MODALLAR -->
 
     <!-- A. Talebe Ekleme / Düzenleme Modali -->
-    <div id="studentModal" class="modal fixed inset-0 bg-black/75 z-[1000] flex items-center justify-center p-4 hidden">
-        <div class="modal-content glass-card max-w-sm w-full p-5 rounded-2xl shadow-xl border border-medrese-accent/30">
-            <div class="flex justify-between items-center pb-2 border-b border-medrese-accent/10 mb-4">
+    <div id="studentModal" class="modal fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1000] flex items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white max-w-sm w-full p-5 rounded-2xl shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4">
                 <h3 id="studentModalTitle" class="font-serif text-sm font-bold text-medrese-accent">Yeni Talebe Ekle</h3>
-                <button onclick="closeStudentModal()" class="text-slate-400 hover:text-rose-400 transition text-sm"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeStudentModal()" class="text-slate-400 hover:text-rose-500 transition text-sm"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form onsubmit="executeSaveStudent(event)" class="space-y-3">
+            <form onsubmit="executeSaveStudent(event)" class="space-y-4">
                 <div>
-                    <label class="text-[10px] text-slate-400 font-bold block mb-1">Talebe Adı Soyadı</label>
-                    <input type="text" id="studentNameInput" placeholder="Örn: Yusuf Akçay" required class="w-full bg-black/30 border border-medrese-accent/20 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-medrese-accent">
+                    <label class="text-[10px] text-slate-500 font-bold block mb-1">Talebe Adı Soyadı</label>
+                    <input type="text" id="studentNameInput" placeholder="Örn: Yusuf Akçay" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition">
                 </div>
                 <div>
-                    <label class="text-[10px] text-slate-400 font-bold block mb-1">Aylık Aidat / Tutar (₺)</label>
-                    <input type="number" id="studentFeeInput" placeholder="Örn: 500" required min="0" class="w-full bg-black/30 border border-medrese-accent/20 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-medrese-accent">
+                    <label class="text-[10px] text-slate-500 font-bold block mb-1">Aylık Aidat / Tutar (₺)</label>
+                    <input type="number" id="studentFeeInput" placeholder="Örn: 500" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition">
                 </div>
                 <div>
-                    <label class="text-[10px] text-slate-400 font-bold block mb-1">Veli Telefon Numarası</label>
-                    <input type="text" id="studentPhoneInput" placeholder="Örn: 5551234567" class="w-full bg-black/30 border border-medrese-accent/20 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-medrese-accent">
+                    <label class="text-[10px] text-slate-500 font-bold block mb-1">Veli Telefon Numarası</label>
+                    <input type="text" id="studentPhoneInput" placeholder="Örn: 5551234567" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition">
                 </div>
-                <button type="submit" id="studentSubmitBtn" class="w-full bg-medrese-accent text-medrese-deep font-bold text-xs py-2.5 rounded-xl hover:bg-amber-600 transition">Kaydet</button>
+                <button type="submit" id="studentSubmitBtn" class="w-full bg-medrese-emerald text-white font-bold text-xs py-3 rounded-xl hover:bg-emerald-700 transition shadow-md shadow-emerald-600/20">Kaydet</button>
             </form>
         </div>
     </div>
 
-    <!-- B. Veli WP Listesi / Numara Düzenleme Modali -->
-    <div id="wpModal" class="modal fixed inset-0 bg-black/85 z-[1000] flex items-center justify-center p-4 hidden">
-        <div class="modal-content glass-card max-w-md w-full p-5 rounded-3xl border border-medrese-accent/30 shadow-2xl max-h-[80vh] flex flex-col">
-            <div class="flex justify-between items-center pb-2 border-b border-medrese-accent/10 mb-4 flex-shrink-0">
+    <!-- B. Veli WP Listesi Modali -->
+    <div id="wpModal" class="modal fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1000] flex items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white max-w-md w-full p-5 rounded-3xl border border-slate-200 shadow-2xl max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4 flex-shrink-0">
                 <h3 class="font-serif text-sm font-bold text-medrese-accent flex items-center gap-1.5">
-                    <i class="fa-brands fa-whatsapp text-lg text-emerald-400"></i> Veli WP İletişim Masası
+                    <i class="fa-brands fa-whatsapp text-lg text-emerald-500"></i> Veli WP İletişim Masası
                 </h3>
-                <button onclick="closeWpModal()" class="text-slate-400 hover:text-rose-400 transition text-sm"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeWpModal()" class="text-slate-400 hover:text-rose-500 transition text-sm"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <p class="text-[10px] text-slate-400 mb-3 flex-shrink-0">Talebelerin veli numaralarını doğrudan buraya yazabilir ve tek tıkla teşekkür mesajı gönderebilirsiniz kanka.</p>
+            <p class="text-[10px] text-slate-500 mb-3 flex-shrink-0">Talebelerin veli numaralarını doğrudan buraya yazabilir ve tek tıkla mesaj gönderebilirsiniz.</p>
 
-            <div class="flex-grow overflow-y-auto space-y-2.5 pr-1 no-scrollbar" id="wpModalStudentList">
+            <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar" id="wpModalStudentList">
                 <!-- JS Dinamik -->
             </div>
         </div>
     </div>
 
-    <!-- C. 🟢 TOPLU WHATSAPP MESAJ MODALİ -->
-    <div id="bulkWpModal" class="modal fixed inset-0 bg-black/85 z-[1200] flex items-center justify-center p-4 hidden">
-        <div class="modal-content glass-card max-w-md w-full p-5 rounded-3xl border border-medrese-accent/30 shadow-2xl max-h-[85vh] flex flex-col">
-            <div class="flex justify-between items-center pb-2 border-b border-medrese-accent/10 mb-4 flex-shrink-0">
+    <!-- C. Toplu Whatsapp Modali -->
+    <div id="bulkWpModal" class="modal fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1200] flex items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white max-w-md w-full p-5 rounded-3xl border border-slate-200 shadow-2xl max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4 flex-shrink-0">
                 <h3 class="font-serif text-sm font-bold text-medrese-accent flex items-center gap-1.5">
-                    <i class="fa-solid fa-comments text-amber-400"></i> Toplu WP Mesaj Masası
+                    <i class="fa-solid fa-comments text-amber-500"></i> Toplu WP Mesaj Masası
                 </h3>
-                <button onclick="closeBulkWpModal()" class="text-slate-400 hover:text-rose-400 transition text-sm"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeBulkWpModal()" class="text-slate-400 hover:text-rose-500 transition text-sm"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="space-y-3 flex-shrink-0 mb-4">
-                <label class="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Gönderilecek Ortak Mesaj:</label>
-                <textarea id="bulkWpMessageInput" rows="3" placeholder="Sınıf velilerine ortak mesajı buraya yazın kanka..." class="w-full bg-black/40 border border-medrese-accent/20 rounded-xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-medrese-accent resize-none"></textarea>
+            <div class="space-y-2 flex-shrink-0 mb-4">
+                <label class="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Gönderilecek Ortak Mesaj:</label>
+                <textarea id="bulkWpMessageInput" rows="3" placeholder="Sınıf velilerine ortak mesajı buraya yazın..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition resize-none"></textarea>
             </div>
 
-            <p class="text-[10px] text-slate-400 mb-2 flex-shrink-0 font-bold uppercase tracking-wider">İletişim Listesi:</p>
-            <div class="flex-grow overflow-y-auto space-y-2.5 pr-1 no-scrollbar" id="bulkWpList">
+            <p class="text-[10px] text-slate-500 mb-2 flex-shrink-0 font-bold uppercase tracking-wider">İletişim Listesi:</p>
+            <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar" id="bulkWpList">
                 <!-- JS Dinamik -->
             </div>
         </div>
     </div>
 
-    <!-- D. Sistem Bilgi Bildirim Modali -->
-    <div id="infoModal" class="modal fixed inset-0 bg-black/85 z-[10000] flex items-center justify-center p-4 hidden">
-        <div class="modal-content glass-card max-w-sm w-full p-5 rounded-2xl text-center border border-medrese-accent/30 shadow-2xl">
-            <div id="infoModalIcon" class="text-medrese-accent text-4xl mb-2"><i class="fa-solid fa-circle-info"></i></div>
-            <h3 id="infoModalTitle" class="font-serif text-sm font-bold text-slate-100 mb-1">Bildirim</h3>
-            <p id="infoModalMsg" class="text-xs text-slate-300 mb-4">Bilgi mesajı.</p>
-            <button onclick="closeInfoModal()" class="w-full bg-medrese-accent text-medrese-deep font-bold text-xs py-2 rounded-xl hover:bg-amber-600 transition">Anladım</button>
+    <!-- D. Bildirim Modali -->
+    <div id="infoModal" class="modal fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[10000] flex items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white max-w-sm w-full p-6 rounded-2xl text-center border border-slate-200 shadow-2xl">
+            <div id="infoModalIcon" class="text-medrese-emerald text-4xl mb-3"><i class="fa-solid fa-circle-info"></i></div>
+            <h3 id="infoModalTitle" class="font-serif text-base font-bold text-slate-800 mb-2">Bildirim</h3>
+            <p id="infoModalMsg" class="text-xs text-slate-500 mb-5 leading-relaxed">Bilgi mesajı.</p>
+            <button onclick="closeInfoModal()" class="w-full bg-slate-100 text-slate-700 font-bold text-xs py-3 rounded-xl hover:bg-slate-200 transition">Anladım</button>
         </div>
     </div>
 
-    <!-- E. Genel Onay / Silme Modali -->
-    <div id="confirmModal" class="modal fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center p-4 hidden">
-        <div class="modal-content glass-card max-w-sm w-full p-5 rounded-2xl text-center border border-rose-500/30">
-            <div class="text-rose-500 text-3xl mb-2"><i class="fa-solid fa-triangle-exclamation"></i></div>
-            <h3 class="font-serif text-sm font-bold text-slate-200 mb-1">Emin misiniz?</h3>
-            <p id="confirmMessage" class="text-[11px] text-slate-400 mb-4">Bu işlem geri alınamaz.</p>
-            <div class="flex gap-2">
-                <button onclick="closeConfirmModal()" class="flex-1 bg-black/40 hover:bg-black/60 text-slate-300 font-bold text-xs py-2 rounded-xl transition">Vazgeç</button>
-                <button onclick="executeConfirmedDelete()" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs py-2 rounded-xl transition">Evet, Sil</button>
+    <!-- E. Silme Onay Modali -->
+    <div id="confirmModal" class="modal fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white max-w-sm w-full p-6 rounded-2xl text-center border-t-4 border-rose-500 shadow-2xl">
+            <div class="text-rose-500 text-4xl mb-3"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h3 class="font-serif text-base font-bold text-slate-800 mb-2">Emin misiniz?</h3>
+            <p id="confirmMessage" class="text-xs text-slate-500 mb-5">Bu işlem geri alınamaz.</p>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-3 rounded-xl transition">Vazgeç</button>
+                <button onclick="executeConfirmedDelete()" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs py-3 rounded-xl transition shadow-md shadow-rose-500/20">Evet, Sil</button>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT PROGRAM MANTIĞI -->
     <script>
-        // BİREYSEL VERİTABANI YOLU (DİĞER UYGULAMALARLA KESİNLİKLE ÇAKIŞMAZ)
         const DB_URL = "https://genel-proje-79c7f-default-rtdb.europe-west1.firebasedatabase.app";
-
-        // Eylül - Temmuz (Ağustos Tatil) Akademik Aylar
         const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
         const START_YEAR = 2026;
         const END_YEAR = 2035;
 
-        // Bireysel State Yapısı
         let systemData = {
-            sistem_ayarlari: {
-                gatePassword: "9876"
-            },
+            sistem_ayarlari: { gatePassword: "9876" },
             ogrenciler: {}
         };
 
         let isUnlocked = false;
         let isUserTyping = false; 
-
         let selectedStudentId = null;
         let selectedYear = START_YEAR;
         let selectedFilterMonth = new Date().getMonth();
         let currentFilterStatus = 'all';
-
         let confirmActionCallback = null;
         let editingStudentId = null;
 
-        // --- 1. SİSTEM BAŞLANGICI VE SENKRONİZASYON ---
         window.onload = async function() {
             try {
                 fillMonthsDropdown();
                 await syncWithCloud();
                 checkSavedSession();
 
-                // Her 5 saniyede bir otomatik yedekleme & senkronizasyon (Yazı yazılmıyorsa)
                 setInterval(async () => {
-                    if (!isUserTyping) {
-                        await syncWithCloud();
-                    }
+                    if (!isUserTyping) await syncWithCloud();
                 }, 5000);
             } catch (err) {
                 console.error("Başlangıç Hatası:", err);
@@ -406,10 +396,7 @@
                 } else {
                     await uploadData();
                 }
-
-                if (!isUserTyping) {
-                    refreshUI();
-                }
+                if (!isUserTyping) refreshUI();
             } catch (err) {
                 console.warn("Bulut eşleşemedi. Yerel hafıza devrede.", err);
                 loadFromLocalStorage();
@@ -419,15 +406,9 @@
         function loadFromLocalStorage() {
             const localData = localStorage.getItem('ilkikra_bireysel_backup');
             if (localData) {
-                try {
-                    systemData = JSON.parse(localData);
-                } catch(e) {
-                    console.error("Yerel yedek açma hatası:", e);
-                }
+                try { systemData = JSON.parse(localData); } catch(e) {}
             }
-            if (!isUserTyping) {
-                refreshUI();
-            }
+            if (!isUserTyping) refreshUI();
         }
 
         function saveToLocalStorage() {
@@ -442,20 +423,13 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(systemData)
                 });
-            } catch(e) {
-                console.warn("Ağ kaydı bekliyor:", e);
-            }
+            } catch(e) {}
         }
 
-        // --- 2. ŞİFRE VE OTURUM KONTROLÜ ---
         function checkSavedSession() {
-            const saved = localStorage.getItem('ilkikra_bireysel_unlocked');
-            if (saved === 'true') {
-                isUnlocked = true;
-                showPanelScreen();
-            } else {
-                showGateScreen();
-            }
+            if (localStorage.getItem('ilkikra_bireysel_unlocked') === 'true') {
+                isUnlocked = true; showPanelScreen();
+            } else { showGateScreen(); }
         }
 
         function checkGatePassword() {
@@ -492,7 +466,6 @@
             refreshUI();
         }
 
-        // --- 3. ARAYÜZ YENİLEME VE LİSTE ÇİZİMİ ---
         function refreshUI() {
             if (!isUnlocked) return;
 
@@ -514,7 +487,7 @@
                 listContainer.innerHTML = '';
 
                 if (keys.length === 0) {
-                    listContainer.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs">Kayıtlı talebe bulunamadı kanka.</div>`;
+                    listContainer.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs font-medium">Kayıtlı talebe bulunamadı.</div>`;
                 } else {
                     keys.forEach(stId => {
                         const st = students[stId];
@@ -527,24 +500,24 @@
 
                         let badge = "";
                         if (selectedFilterMonth === 7) {
-                            badge = `<span class="bg-amber-500/10 text-amber-400 font-bold text-[9px] px-2 py-0.5 rounded-full"><i class="fa-solid fa-sun"></i> Tatil</span>`;
+                            badge = `<span class="bg-amber-100 text-amber-700 font-bold text-[9px] px-2 py-0.5 rounded-md"><i class="fa-solid fa-sun"></i> Tatil</span>`;
                         } else {
                             badge = isPaid 
-                                ? `<span class="bg-emerald-500/10 text-emerald-400 font-bold text-[9px] px-2 py-0.5 rounded-full"><i class="fa-solid fa-check"></i> Ödedi</span>`
-                                : `<span class="bg-rose-500/10 text-rose-400 font-bold text-[9px] px-2 py-0.5 rounded-full"><i class="fa-solid fa-spinner"></i> Kalan</span>`;
+                                ? `<span class="bg-emerald-100 text-emerald-700 font-bold text-[9px] px-2 py-0.5 rounded-md"><i class="fa-solid fa-check"></i> Ödedi</span>`
+                                : `<span class="bg-rose-100 text-rose-600 font-bold text-[9px] px-2 py-0.5 rounded-md"><i class="fa-solid fa-spinner"></i> Kalan</span>`;
                         }
 
                         card.innerHTML = `
                             <div class="flex flex-col gap-0.5 text-left">
-                                <span class="font-bold text-sm text-slate-200 truncate block w-[160px]">${st.ad}</span>
+                                <span class="font-bold text-sm text-slate-800 truncate block w-[160px]">${st.ad}</span>
                                 <div class="flex items-center gap-2 mt-0.5">
-                                    <span class="text-medrese-accent text-xs font-bold">${formatCurrency(st.ucret || 0)}</span>
+                                    <span class="text-emerald-700 text-xs font-extrabold">${formatCurrency(st.ucret || 0)}</span>
                                     ${badge}
                                 </div>
                             </div>
                             <div class="flex gap-1" onclick="event.stopPropagation();">
-                                <button onclick="openEditStudentModal('${stId}')" class="text-slate-400 hover:text-blue-400 p-1.5 transition"><i class="fa-regular fa-pen-to-square"></i></button>
-                                <button onclick="deleteStudent('${stId}')" class="text-slate-400 hover:text-rose-400 p-1.5 transition"><i class="fa-regular fa-trash-can"></i></button>
+                                <button onclick="openEditStudentModal('${stId}')" class="text-slate-400 hover:text-blue-500 bg-slate-50 hover:bg-blue-50 p-1.5 rounded-md transition"><i class="fa-regular fa-pen-to-square"></i></button>
+                                <button onclick="deleteStudent('${stId}')" class="text-slate-400 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-1.5 rounded-md transition"><i class="fa-regular fa-trash-can"></i></button>
                             </div>
                         `;
                         listContainer.appendChild(card);
@@ -554,7 +527,7 @@
                 const placeholder = document.getElementById('noDataPlaceholder');
                 const content = document.getElementById('calendarContent');
 
-                // BUG FIX: placeholder.remove() yerine placeholder.classList.remove() kullanıldı!
+                // Önceki hatanın düzeltildiği (remove yerine classList.remove) ve classList.add kullanıldığı yer:
                 if (selectedStudentId && students[selectedStudentId]) {
                     placeholder.classList.add('hidden');
                     content.classList.remove('hidden');
@@ -575,28 +548,24 @@
         function selectStudent(stId) {
             selectedStudentId = stId;
             refreshUI();
-
             if (window.innerWidth < 1024) {
                 setTimeout(() => {
                     const target = document.getElementById('calendarPanel');
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 150);
             }
         }
 
         function changeFilterMonth(val) {
-            selectedFilterMonth = parseInt(val);
-            refreshUI();
+            selectedFilterMonth = parseInt(val); refreshUI();
         }
 
         function setFilterStatus(status) {
             currentFilterStatus = status;
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.className = "filter-btn bg-black/10 border border-transparent text-slate-400 text-[10px] font-bold py-1 rounded-lg";
+                btn.className = "filter-btn bg-slate-50 border border-transparent text-slate-500 hover:bg-slate-100 text-[10px] font-bold py-1.5 rounded-lg transition";
             });
-            document.getElementById(`filter-${status}`).className = "filter-btn bg-medrese-accent/10 border border-medrese-accent/20 text-medrese-accent text-[10px] font-bold py-1 rounded-lg active";
+            document.getElementById(`filter-${status}`).className = "filter-btn bg-emerald-100 border border-emerald-300 text-emerald-700 text-[10px] font-bold py-1.5 rounded-lg active transition";
             refreshUI();
         }
 
@@ -607,13 +576,9 @@
 
             for (let yr = START_YEAR; yr <= END_YEAR; yr++) {
                 const tab = document.createElement('button');
-                tab.className = `px-3 py-1.5 rounded-xl font-bold text-xs whitespace-nowrap transition ${yr === selectedYear ? 'bg-medrese-accent text-medrese-deep shadow shadow-medrese-accent/20' : 'bg-black/30 text-slate-400 hover:text-slate-100'}`;
+                tab.className = `px-3 py-1.5 rounded-xl font-bold text-xs whitespace-nowrap transition ${yr === selectedYear ? 'bg-medrese-accent text-white shadow-md shadow-emerald-900/10' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'}`;
                 tab.innerText = yr;
-                tab.onclick = () => {
-                    selectedYear = yr;
-                    renderYearTabs();
-                    renderCalendar();
-                };
+                tab.onclick = () => { selectedYear = yr; renderYearTabs(); renderCalendar(); };
                 container.appendChild(tab);
             }
         }
@@ -625,21 +590,19 @@
 
             const grid = document.getElementById('paymentGrid');
             grid.innerHTML = '';
-
             let paidCount = 0;
 
             MONTHS.forEach((m, idx) => {
                 const cellKey = `${selectedYear}-${idx}`;
                 const isAugust = (idx === 7); 
                 const isPaid = !isAugust && st.odemeler && st.odemeler[cellKey] === true;
-
                 if (isPaid) paidCount++;
 
                 const cell = document.createElement('div');
                 if (isAugust) {
-                    cell.className = "cell opacity-40 cursor-not-allowed bg-slate-800/40 border-dashed border-slate-600";
+                    cell.className = "cell opacity-60 cursor-not-allowed bg-slate-50 border-dashed border-slate-300";
                     cell.innerHTML = `
-                        <span class="text-xs font-bold text-slate-500">${m}</span>
+                        <span class="text-xs font-bold text-slate-400">${m}</span>
                         <span class="text-[9px] text-amber-500 mt-1 uppercase font-bold flex items-center gap-1">
                             <i class="fa-solid fa-sun"></i> TATİL
                         </span>
@@ -648,8 +611,8 @@
                     cell.className = `cell ${isPaid ? 'paid' : ''}`;
                     cell.onclick = () => togglePayment(cellKey);
                     cell.innerHTML = `
-                        <span class="text-xs font-bold ${isPaid ? 'text-emerald-400' : 'text-slate-400'}">${m}</span>
-                        <span class="text-[9px] flex items-center gap-1 mt-1 ${isPaid ? 'text-emerald-400 font-bold' : 'text-slate-500'}">
+                        <span class="text-xs font-bold ${isPaid ? 'text-emerald-700' : 'text-slate-600'}">${m}</span>
+                        <span class="text-[9px] flex items-center gap-1 mt-1 ${isPaid ? 'text-emerald-600 font-bold' : 'text-slate-400 font-medium'}">
                             <i class="fa-solid ${isPaid ? 'fa-circle-check' : 'fa-circle-notch'}"></i>
                             ${isPaid ? 'ÖDENDİ' : 'BEKLİYOR'}
                         </span>
@@ -669,18 +632,13 @@
         }
 
         function togglePayment(cellKey) {
-            const students = systemData.ogrenciler || {};
-            const st = students[selectedStudentId];
+            const st = systemData.ogrenciler[selectedStudentId];
             if (!st) return;
-
             if (!st.odemeler) st.odemeler = {};
             st.odemeler[cellKey] = !st.odemeler[cellKey];
-
-            uploadData();
-            refreshUI();
+            uploadData(); refreshUI();
         }
 
-        // --- 4. TALEBE EKLEME & DÜZENLEME ---
         function openAddStudentModal() {
             editingStudentId = null;
             document.getElementById('studentModalTitle').innerText = "Yeni Talebe Kaydet";
@@ -694,7 +652,6 @@
             editingStudentId = stId;
             const st = systemData.ogrenciler[stId];
             if (!st) return;
-
             document.getElementById('studentModalTitle').innerText = "Talebe Bilgilerini Güncelle";
             document.getElementById('studentNameInput').value = st.ad || '';
             document.getElementById('studentFeeInput').value = st.ucret || '';
@@ -702,9 +659,7 @@
             document.getElementById('studentModal').classList.remove('hidden');
         }
 
-        function closeStudentModal() {
-            document.getElementById('studentModal').classList.add('hidden');
-        }
+        function closeStudentModal() { document.getElementById('studentModal').classList.add('hidden'); }
 
         function executeSaveStudent(e) {
             e.preventDefault();
@@ -722,66 +677,50 @@
                 }
             } else {
                 const newId = 'st_' + Date.now();
-                systemData.ogrenciler[newId] = {
-                    ad: name,
-                    ucret: fee,
-                    veli_tel: phone,
-                    odemeler: {}
-                };
+                systemData.ogrenciler[newId] = { ad: name, ucret: fee, veli_tel: phone, odemeler: {} };
                 selectedStudentId = newId;
             }
-
-            uploadData();
-            closeStudentModal();
-            refreshUI();
+            uploadData(); closeStudentModal(); refreshUI();
         }
 
         function deleteStudent(stId) {
             const st = systemData.ogrenciler[stId];
             if (!st) return;
-
             confirmActionCallback = () => {
                 delete systemData.ogrenciler[stId];
                 if (selectedStudentId === stId) selectedStudentId = null;
-                
-                uploadData();
-                refreshUI();
-                closeConfirmModal();
+                uploadData(); refreshUI(); closeConfirmModal();
             };
-
             document.getElementById('confirmMessage').innerText = `"${st.ad}" isimli talebeyi sınıfınızdan silmek istediğinize emin misiniz?`;
             document.getElementById('confirmModal').classList.remove('hidden');
         }
 
-        // --- 5. 📞 WHATSAPP VELİ İLETİŞİM VE TOPLU MESAJ MOTORU ---
         function openWpModal() {
             const students = systemData.ogrenciler || {};
             const keys = Object.keys(students).filter(k => students[k] && students[k].ad);
-            
             const listEl = document.getElementById('wpModalStudentList');
             listEl.innerHTML = '';
 
             if (keys.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs">Sınıfınızda kayıtlı öğrenci yok.</div>`;
+                listEl.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs font-medium">Sınıfınızda kayıtlı öğrenci yok.</div>`;
             } else {
                 keys.forEach(stId => {
                     const student = students[stId];
                     const phoneVal = student.veli_tel || '';
-
                     const row = document.createElement('div');
-                    row.className = "flex items-center justify-between p-3 bg-black/20 rounded-xl border border-medrese-accent/10 gap-2";
+                    row.className = "flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 gap-2";
                     row.innerHTML = `
                         <div class="flex-grow min-w-0 text-left">
-                            <p class="font-bold text-xs text-slate-200 truncate">${student.ad}</p>
-                            <p class="text-[9px] text-slate-400 mt-0.5">Aidat: <span class="text-medrese-accent font-semibold">${formatCurrency(student.ucret || 0)}</span></p>
+                            <p class="font-bold text-xs text-slate-800 truncate">${student.ad}</p>
+                            <p class="text-[9px] text-slate-500 mt-0.5">Aidat: <span class="text-emerald-600 font-bold">${formatCurrency(student.ucret || 0)}</span></p>
                         </div>
                         <div class="flex items-center gap-1.5 flex-shrink-0" onclick="event.stopPropagation();">
                             <input type="text" placeholder="Telefon No" value="${phoneVal}" 
                                    onfocus="isUserTyping = true;"
                                    onblur="isUserTyping = false; saveWpPhone('${stId}', this.value)" 
-                                   class="bg-black/30 border border-medrese-accent/10 rounded-lg px-2 py-1.5 text-[11px] text-slate-100 focus:outline-none focus:border-medrese-accent w-[150px] text-center">
+                                   class="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[11px] text-slate-800 focus:outline-none focus:border-emerald-400 w-[140px] text-center transition">
                             
-                            <button onclick="sendWpMessage('${stId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-lg flex items-center justify-center transition">
+                            <button onclick="sendWpMessage('${stId}')" class="bg-emerald-500 hover:bg-emerald-600 text-white p-2 rounded-lg flex items-center justify-center transition shadow-sm">
                                 <i class="fa-brands fa-whatsapp text-sm"></i>
                             </button>
                         </div>
@@ -789,132 +728,76 @@
                     listEl.appendChild(row);
                 });
             }
-
             document.getElementById('wpModal').classList.remove('hidden');
         }
 
-        function closeWpModal() {
-            document.getElementById('wpModal').classList.add('hidden');
-            refreshUI();
-        }
-
-        function saveWpPhone(stId, val) {
-            if (systemData.ogrenciler && systemData.ogrenciler[stId]) {
-                systemData.ogrenciler[stId].veli_tel = val.trim();
-                uploadData();
-            }
-        }
+        function closeWpModal() { document.getElementById('wpModal').classList.add('hidden'); refreshUI(); }
+        function saveWpPhone(stId, val) { if (systemData.ogrenciler[stId]) { systemData.ogrenciler[stId].veli_tel = val.trim(); uploadData(); } }
 
         function sendWpMessage(stId) {
             const student = systemData.ogrenciler[stId];
             if (!student) return;
-
-            let rawPhone = student.veli_tel || "";
-            let cleanPhone = rawPhone.replace(/\s+/g, '').replace(/[^0-9]/g, '');
-
-            if (!cleanPhone) {
-                showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Numara Eksik!", "Lütfen önce velinin numarasını kaydedin kanka.");
-                return;
-            }
-
-            if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) {
-                cleanPhone = '90' + cleanPhone;
-            }
-
-            const filterMonthName = MONTHS[selectedFilterMonth];
-            const textMsg = `İlkikra Medresesi: ${student.ad} isimli talebemizin ${filterMonthName} ayı aidat ücreti ödenmiştir. Teşekkür ederiz.`;
-
-            const wpUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(textMsg)}`;
-            window.open(wpUrl, '_blank');
+            let cleanPhone = (student.veli_tel || "").replace(/\s+/g, '').replace(/[^0-9]/g, '');
+            if (!cleanPhone) { showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Numara Eksik!", "Lütfen önce velinin numarasını kaydedin."); return; }
+            if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) cleanPhone = '90' + cleanPhone;
+            const textMsg = `İlkikra Medresesi: ${student.ad} isimli talebemizin ${MONTHS[selectedFilterMonth]} ayı aidat ücreti ödenmiştir. Teşekkür ederiz.`;
+            window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(textMsg)}`, '_blank');
         }
 
         function openBulkWpModal() {
             const listEl = document.getElementById('bulkWpList');
             listEl.innerHTML = '';
-
-            const msgInput = document.getElementById('bulkWpMessageInput');
-            msgInput.value = `İlkikra Medresesi: Saygıdeğer velimiz, öğrencimizin aidat ve medrese durumları güncellenmiştir. Bilgilerinize sunar, hayırlı günler dileriz.`;
-
+            document.getElementById('bulkWpMessageInput').value = `İlkikra Medresesi: Saygıdeğer velimiz, öğrencimizin aidat ve medrese durumları güncellenmiştir. Bilgilerinize sunar, hayırlı günler dileriz.`;
+            
             const students = systemData.ogrenciler || {};
             const keys = Object.keys(students).filter(k => students[k] && students[k].ad);
 
             if (keys.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-4 text-slate-500 text-xs">Sınıfınızda kayıtlı öğrenci yok.</div>`;
+                listEl.innerHTML = `<div class="text-center py-4 text-slate-500 text-xs font-medium">Sınıfınızda kayıtlı öğrenci yok.</div>`;
             } else {
                 keys.forEach(stId => {
                     const student = students[stId];
                     const rawPhone = student.veli_tel || '';
-                    
                     const row = document.createElement('div');
-                    row.className = "flex items-center justify-between p-3 bg-black/20 rounded-xl border border-medrese-accent/10 text-xs";
+                    row.className = "flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs";
                     row.innerHTML = `
                         <div class="text-left">
-                            <p class="font-bold text-slate-200">${student.ad}</p>
-                            <p class="text-[10px] text-slate-400">Veli: ${rawPhone || 'Kayıtlı Değil ❌'}</p>
+                            <p class="font-bold text-slate-800">${student.ad}</p>
+                            <p class="text-[10px] text-slate-500 font-medium">Veli: ${rawPhone || 'Kayıtlı Değil ❌'}</p>
                         </div>
-                        <button onclick="sendBulkWpIndividual('${rawPhone}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] py-1.5 px-3 rounded-lg flex items-center gap-1 transition">
+                        <button onclick="sendBulkWpIndividual('${rawPhone}')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[10px] py-1.5 px-3 rounded-lg flex items-center gap-1 transition shadow-sm">
                             <i class="fa-brands fa-whatsapp text-sm"></i> Gönder
                         </button>
                     `;
                     listEl.appendChild(row);
                 });
             }
-
             document.getElementById('bulkWpModal').classList.remove('hidden');
         }
 
-        function closeBulkWpModal() {
-            document.getElementById('bulkWpModal').classList.add('hidden');
-        }
+        function closeBulkWpModal() { document.getElementById('bulkWpModal').classList.add('hidden'); }
 
         function sendBulkWpIndividual(rawPhone) {
             let cleanPhone = rawPhone.replace(/\s+/g, '').replace(/[^0-9]/g, '');
-
-            if (!cleanPhone) {
-                showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Numara Eksik!", "Telefon numarası bulunamadı kanka.");
-                return;
-            }
-
-            if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) {
-                cleanPhone = '90' + cleanPhone;
-            }
-
+            if (!cleanPhone) { showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Numara Eksik!", "Telefon numarası bulunamadı."); return; }
+            if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) cleanPhone = '90' + cleanPhone;
             const customMsg = document.getElementById('bulkWpMessageInput').value.trim();
-            if (!customMsg) {
-                showInfoModal("<i class='fa-solid fa-pen-clip text-amber-500'></i>", "Mesaj Boş!", "Lütfen gönderilecek ortak mesajı yazın.");
-                return;
-            }
-
-            const wpUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(customMsg)}`;
-            window.open(wpUrl, '_blank');
+            if (!customMsg) { showInfoModal("<i class='fa-solid fa-pen-clip text-amber-500'></i>", "Mesaj Boş!", "Lütfen gönderilecek ortak mesajı yazın."); return; }
+            window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(customMsg)}`, '_blank');
         }
 
-        // --- 6. GENEL YARDIMCI VE MODAL YÖNETİMLERİ ---
         function showInfoModal(iconHtml, title, msg) {
             document.getElementById('infoModalIcon').innerHTML = iconHtml;
             document.getElementById('infoModalTitle').innerText = title;
             document.getElementById('infoModalMsg').innerText = msg;
             document.getElementById('infoModal').classList.remove('hidden');
         }
-
-        function closeInfoModal() {
-            document.getElementById('infoModal').classList.add('hidden');
-        }
-
-        function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.add('hidden');
-            confirmActionCallback = null;
-        }
-
-        function executeConfirmedDelete() {
-            if (confirmActionCallback) {
-                confirmActionCallback();
-            }
-        }
-
+        function closeInfoModal() { document.getElementById('infoModal').classList.add('hidden'); }
+        function closeConfirmModal() { document.getElementById('confirmModal').classList.add('hidden'); confirmActionCallback = null; }
+        function executeConfirmedDelete() { if (confirmActionCallback) confirmActionCallback(); }
+        
         function formatCurrency(val) {
-            const num = parseFloat(val) || 0;
-            return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num);
+            return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(parseFloat(val) || 0);
         }
     </script>
 </body>
