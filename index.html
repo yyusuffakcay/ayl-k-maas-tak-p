@@ -98,7 +98,7 @@
         </div>
         <div class="w-full space-y-4">
             <div>
-                <select id="teacherSelectDropdown" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition mb-3">
+                <select id="teacherSelectDropdown" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition mb-3">
                     <option value="" disabled selected>Hoca Seçiniz...</option>
                     <!-- JS ile Dolacak -->
                 </select>
@@ -158,7 +158,7 @@
                 
                 <!-- Hoca Ekleme Formu -->
                 <div class="flex gap-2 mb-4 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
-                    <input type="text" id="newTeacherNameInput" placeholder="Yeni Hoca Adı (Örn: Ahmet Hoca)" class="flex-grow bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
+                    <input type="text" id="newTeacherNameInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Yeni Hoca Adı (Örn: Ahmet Hoca)" class="flex-grow bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
                     <button onclick="addTeacher()" class="bg-medrese-accent hover:bg-emerald-800 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm whitespace-nowrap">Ekle</button>
                 </div>
 
@@ -198,7 +198,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- 👤 2. BİREYSEL SINIF ÇALIŞMA ALANI (HOCA PANELİ) -->
     <div id="mainPanel" class="w-full max-w-[1200px] glass-card rounded-3xl p-4 sm:p-6 flex flex-col gap-6 hidden">
@@ -315,7 +314,7 @@
     <div id="changeAdminPwdModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4 hidden">
         <div class="modal-content bg-white max-w-sm w-full p-5 rounded-2xl shadow-2xl border border-slate-200">
             <h3 class="font-serif text-sm font-bold text-medrese-accent mb-4">Yönetici Şifresini Değiştir</h3>
-            <input type="text" id="newAdminPwdInput" placeholder="Yeni Yönetici Şifresi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-medrese-accent mb-4">
+            <input type="text" id="newAdminPwdInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Yeni Yönetici Şifresi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-medrese-accent mb-4">
             <div class="flex gap-2">
                 <button onclick="closeChangeAdminPwdModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition">İptal</button>
                 <button onclick="executeChangeAdminPwd()" class="flex-1 bg-medrese-accent text-white font-bold text-xs py-2.5 rounded-xl hover:bg-emerald-900 transition">Kaydet</button>
@@ -327,7 +326,7 @@
     <div id="changeTeacherPwdModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4 hidden">
         <div class="modal-content bg-white max-w-sm w-full p-5 rounded-2xl shadow-2xl border border-slate-200">
             <h3 id="changeTeacherPwdTitle" class="font-serif text-sm font-bold text-medrese-accent mb-4">Hoca Şifresini Değiştir</h3>
-            <input type="text" id="newTeacherPwdInput" placeholder="Yeni Şifre" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-medrese-accent mb-4">
+            <input type="text" id="newTeacherPwdInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Yeni Şifre" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-medrese-accent mb-4">
             <div class="flex gap-2">
                 <button onclick="closeChangeTeacherPwdModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition">İptal</button>
                 <button onclick="executeChangeTeacherPwd()" class="flex-1 bg-medrese-accent text-white font-bold text-xs py-2.5 rounded-xl hover:bg-emerald-900 transition">Kaydet</button>
@@ -345,15 +344,15 @@
             <form onsubmit="executeSaveStudent(event)" class="space-y-4">
                 <div>
                     <label class="text-[10px] text-slate-500 font-bold block mb-1">Talebe Adı Soyadı</label>
-                    <input type="text" id="studentNameInput" placeholder="Örn: Yusuf Akçay" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
+                    <input type="text" id="studentNameInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Örn: Yusuf Akçay" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
                 </div>
                 <div>
                     <label class="text-[10px] text-slate-500 font-bold block mb-1">Aylık Aidat / Tutar (₺)</label>
-                    <input type="number" id="studentFeeInput" placeholder="Örn: 500" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
+                    <input type="number" id="studentFeeInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Örn: 500" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
                 </div>
                 <div>
                     <label class="text-[10px] text-slate-500 font-bold block mb-1">Veli Telefon Numarası</label>
-                    <input type="text" id="studentPhoneInput" placeholder="Örn: 5551234567" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
+                    <input type="text" id="studentPhoneInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Örn: 5551234567" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-400">
                 </div>
                 <button type="submit" id="studentSubmitBtn" class="w-full bg-medrese-emerald text-white font-bold text-xs py-3 rounded-xl hover:bg-emerald-700 transition shadow-md">Kaydet</button>
             </form>
@@ -385,7 +384,7 @@
             </div>
             <div class="space-y-2 flex-shrink-0 mb-4">
                 <label class="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Gönderilecek Ortak Mesaj:</label>
-                <textarea id="bulkWpMessageInput" rows="3" placeholder="Sınıf velilerine ortak mesajı buraya yazın..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 resize-none"></textarea>
+                <textarea id="bulkWpMessageInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" rows="3" placeholder="Sınıf velilerine ortak mesajı buraya yazın..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 resize-none"></textarea>
             </div>
             <p class="text-[10px] text-slate-500 mb-2 flex-shrink-0 font-bold uppercase tracking-wider">İletişim Listesi:</p>
             <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar" id="bulkWpList"></div>
@@ -416,8 +415,8 @@
     </div>
 
     <script>
-        // https://yyusuffakcay-56280-default-rtdb.europe-west1.firebasedatabase.app
-        const DB_URL = "https://YENI_PROJENIN_ISMI-default-rtdb.europe-west1.firebasedatabase.app";
+        // KULLANICIYA AİT YEPYENİ FIREBASE LİNKİ EKLENDİ
+        const DB_URL = "https://yyusuffakcay-56280-default-rtdb.europe-west1.firebasedatabase.app";
         
         const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
         const START_YEAR = 2026;
@@ -430,7 +429,7 @@
         };
 
         let isUnlocked = false;
-        let currentRole = null; // 'admin' veya 'teacher'
+        let currentRole = null; 
         let currentTeacherId = null; 
         
         let isUserTyping = false; 
@@ -442,7 +441,7 @@
         let confirmActionCallback = null;
         let editingStudentId = null;
         let editingTeacherPwdId = null;
-        let expandedAdminLists = new Set(); // Açık olan listeleri hafızada tutmak için eklendi
+        let expandedAdminLists = new Set();
 
         window.onload = async function() {
             try {
@@ -478,7 +477,6 @@
 
         async function syncWithCloud() {
             try {
-                // Önbellek (Cache) kırmak için sonuna zaman damgası ekledik. Telefon hep en güncelini çekecek.
                 const response = await fetch(`${DB_URL}.json?_t=` + new Date().getTime(), { cache: 'no-store' });
                 if (!response.ok) throw new Error("Veritabanı bağlantısı yok veya erişim izni (Rules) kapalı.");
                 const data = await response.json();
@@ -486,7 +484,6 @@
                 if (data && typeof data === 'object') {
                     systemData = data;
                     
-                    // GÖÇ MANTIĞI (MIGRATION): Eski 'ogrenciler' yapısı varsa, onu varsayılan hocaya ata.
                     if (systemData.ogrenciler && !systemData.hocalar) {
                         systemData.hocalar = {
                             'hoca_default': { isim: 'Yusuf Hoca', sifre: '9876', ogrenciler: systemData.ogrenciler }
@@ -531,11 +528,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(systemData)
                 });
-                
-                // Eğer Firebase rules kapalıysa burada hata yakalayacak
-                if (!response.ok) {
-                    console.error("Buluta kayıt BAŞARISIZ! Lütfen Firebase 'Rules' ayarlarından okuma/yazma (read/write) izinlerini 'true' yapın.");
-                }
+                if (!response.ok) console.error("Kayıt Başarısız. Firebase Rules kapalı olabilir.");
             } catch(e) {
                 console.error("Bağlantı hatası:", e);
             }
@@ -559,7 +552,7 @@
         function renderGateTeachers() {
             const select = document.getElementById('teacherSelectDropdown');
             if(!select) return;
-            const currentSelection = select.value; // Mevcut seçimi kaydet
+            const currentSelection = select.value;
             select.innerHTML = '<option value="" disabled selected>Kendi İsminizi Seçin...</option>';
             
             const hocalar = systemData.hocalar || {};
@@ -571,13 +564,20 @@
             });
             
             if (currentSelection && hocalar[currentSelection]) {
-                select.value = currentSelection; // Listeyi yeniledikten sonra seçimi geri yükle
+                select.value = currentSelection;
             }
+        }
+
+        function cleanString(str) {
+            // Boşlukları ve gereksiz gizli karakterleri tamamen temizleyen güvenli fonksiyon
+            if (!str) return "";
+            return String(str).replace(/\s+/g, '').trim();
         }
 
         function checkTeacherLogin() {
             const select = document.getElementById('teacherSelectDropdown');
-            const pwdInput = document.getElementById('gatePasswordInput').value.trim();
+            const rawInput = document.getElementById('gatePasswordInput').value;
+            const pwdInput = cleanString(rawInput); // Tüm boşlukları yok eder
             const hId = select.value;
 
             if (!hId) {
@@ -587,7 +587,9 @@
             }
 
             const hoca = systemData.hocalar[hId];
-            if (hoca && hoca.sifre === pwdInput) {
+            const realTeacherPwd = cleanString(hoca.sifre);
+
+            if (hoca && realTeacherPwd === pwdInput) {
                 isUnlocked = true;
                 currentRole = 'teacher';
                 currentTeacherId = hId;
@@ -604,7 +606,6 @@
             }
         }
 
-        // --- YÖNETİCİ (ADMIN) GİRİŞİ ---
         function openAdminLoginModal() {
             document.getElementById('adminPasswordInput').value = '';
             document.getElementById('adminLoginErrorMsg').classList.add('hidden');
@@ -613,17 +614,16 @@
         function closeAdminLoginModal() { document.getElementById('adminLoginModal').classList.add('hidden'); }
         
         function checkAdminPassword() {
-            // Telefon klavyesindeki otomatik boşlukları siler (.trim())
-            const input = document.getElementById('adminPasswordInput').value.trim();
-            
-            // Eğer şifre sadece sayılardan oluşuyorsa (örn: 12345) sistem çökmesin diye String (metin) formatına zorluyoruz.
-            const realPwd = String(systemData.sistem_ayarlari.adminPassword || "İLK İKRA").trim();
-            
-            // Telefonda büyük/küçük harf duyarlılığı yüzünden hata vermemesi için ikisini de büyütüp karşılaştırıyoruz
-            if (String(input).toLocaleUpperCase('tr-TR') === realPwd.toLocaleUpperCase('tr-TR')) {
+            const rawInput = document.getElementById('adminPasswordInput').value;
+            const input = cleanString(rawInput); // Boşluksuz tertemiz string
+            const rawPwd = systemData.sistem_ayarlari.adminPassword || "İLK İKRA";
+            const realPwd = cleanString(rawPwd);
+
+            // Büyüterek de kıyaslarız (sayılar etkilenmez, harfler eşitlenir)
+            if (input.toLocaleUpperCase('tr-TR') === realPwd.toLocaleUpperCase('tr-TR') || input === realPwd) {
                 isUnlocked = true;
                 currentRole = 'admin';
-                localStorage.setItem('ilkikra_role', 'admin'); // Yönetici oturumunu da kaydet
+                localStorage.setItem('ilkikra_role', 'admin'); 
                 closeAdminLoginModal();
                 showPanelScreen();
             } else {
@@ -641,7 +641,6 @@
             renderGateTeachers();
         }
 
-        // --- EKRAN GEÇİŞLERİ ---
         function showGateScreen() {
             document.getElementById('gateScreen').classList.remove('hidden');
             document.getElementById('mainPanel').classList.add('hidden');
@@ -670,13 +669,11 @@
             else if (currentRole === 'teacher') refreshUI();
         }
 
-
         // 👑 YÖNETİCİ FONKSİYONLARI 
         function renderAdminPanel() {
             const hocalar = systemData.hocalar || {};
             const keys = Object.keys(hocalar);
 
-            // 1. Hoca Listesi Çizimi
             const tList = document.getElementById('adminTeacherList');
             tList.innerHTML = '';
             if (keys.length === 0) {
@@ -700,7 +697,6 @@
                 });
             }
 
-            // 2. Sınıf Raporları Çizimi
             const overviewList = document.getElementById('adminOverviewList');
             overviewList.innerHTML = '';
             
@@ -838,7 +834,6 @@
             uploadData(); closeChangeAdminPwdModal();
             showInfoModal("<i class='fa-solid fa-check text-emerald-500'></i>", "Başarılı", "Yönetici şifresi güncellendi.");
         }
-
 
         // 👤 BİREYSEL HOCA FONKSİYONLARI
         function getTeacherStudents() {
