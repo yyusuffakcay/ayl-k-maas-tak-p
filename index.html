@@ -419,15 +419,19 @@
         </div>
     </div>
 
+    <!-- JAVASCRIPT PROGRAM MANTIĞI -->
     <script>
-        // KULLANICIYA AİT YEPYENİ FIREBASE LİNKİ (Sondaki / tamamen kaldırıldı, hata riski sıfır!)
+        // YEPYENİ FIREBASE LİNKİN (Lütfen sonuna / koyma kanka, sistem otomatik ayarlar)
         const DB_URL = "https://yyusuffakcay-56280-default-rtdb.europe-west1.firebasedatabase.app";
         
+        // Linkin sonundaki / işaretini (eğer sen yanlışlıkla koyarsan diye) otomatik silen güvenlik kalkanı:
+        const BASE_URL = DB_URL.endsWith('/') ? DB_URL.slice(0, -1) : DB_URL;
+
         const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
         const START_YEAR = 2026;
         const END_YEAR = 2035;
 
-        // YENİ SİSTEM MİMARİSİ
+        // SİSTEM MİMARİSİ
         let systemData = {
             sistem_ayarlari: { adminPassword: "İLK İKRA" },
             hocalar: {}
@@ -446,7 +450,7 @@
         let confirmActionCallback = null;
         let editingStudentId = null;
         let editingTeacherPwdId = null;
-        let expandedAdminLists = new Set(); // Yönetici panelindeki açık listeleri tutar
+        let expandedAdminLists = new Set(); 
 
         // 🟢 BAĞLANTI DURUMUNU GÖSTEREN FONKSİYON
         function setSyncStatus(status) {
@@ -508,18 +512,12 @@
             });
         }
 
-        // ÖNBELLEK KIRICI SİSTEM (Telefonun hafızadan çekmesini engeller)
+        // ÖNBELLEK KIRICI SİSTEM (Telefonun güvenlik duvarına çarpmaz, saf fetch atar!)
         async function syncWithCloud() {
             setSyncStatus('syncing');
             try {
-                // cache: 'no-store' ve zaman damgası (_t) ile tarayıcı önbelleği tamamen iptal edildi
-                const response = await fetch(`${DB_URL}.json?_t=${new Date().getTime()}`, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                        'Pragma': 'no-cache'
-                    }
-                });
+                // SADECE zaman damgası gönderiyoruz, Headers YOK! Telefon bunu basit istek sanıp engellemez.
+                const response = await fetch(`${BASE_URL}.json?_t=${new Date().getTime()}`);
 
                 if (!response.ok) {
                     if (response.status === 401 || response.status === 403) throw new Error("rules");
@@ -531,7 +529,6 @@
                 if (data && typeof data === 'object') {
                     systemData = data;
                     
-                    // Eski sistemden (sadece ogrenciler varken) yeni sisteme göç
                     if (systemData.ogrenciler && !systemData.hocalar) {
                         systemData.hocalar = {
                             'hoca_default': { isim: 'Yusuf Hoca', sifre: '9876', ogrenciler: systemData.ogrenciler }
@@ -579,9 +576,9 @@
             localStorage.setItem('ilkikra_medrese_backup', JSON.stringify(systemData));
             setSyncStatus('syncing');
             try {
-                const response = await fetch(`${DB_URL}.json`, {
+                // Burada da Headers (Content-Type) YOK! Böylece telefonda "CORS Preflight" engeline takılmaz!
+                const response = await fetch(`${BASE_URL}.json`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(systemData)
                 });
                 if (response.ok) {
@@ -629,7 +626,6 @@
         }
 
         function cleanString(val) {
-            // "12345" gibi sayılar geldiğinde kodun çökmesini engellemek için önce kesinlikle String'e çeviriyoruz
             if (val === null || val === undefined) return "";
             return String(val).replace(/\s+/g, '').trim();
         }
@@ -680,7 +676,6 @@
             const rawPwd = systemData.sistem_ayarlari.adminPassword || "İLK İKRA";
             const realPwd = cleanString(rawPwd);
 
-            // Büyüterek kıyaslıyoruz, sayılar varsa ("12345" gibi) hata vermeden geçer çünkü stringe çevrildi
             if (input.toLocaleUpperCase('tr-TR') === realPwd.toLocaleUpperCase('tr-TR') || input === realPwd) {
                 isUnlocked = true;
                 currentRole = 'admin';
