@@ -544,8 +544,6 @@
 
         function checkTeacherLogin() {
             const select = document.getElementById('teacherSelectDropdown');
-            const rawInput = document.getElementById('gatePasswordInput').value;
-            const pwdInput = String(rawInput).trim();
             const hId = select.value;
 
             if (!hId) {
@@ -554,17 +552,43 @@
                 return;
             }
 
+            // 🟢 YENİ EKLENEN: HIZLI GİRİŞ KONTROLÜ (Şifresiz Bypass)
+            const savedRole = localStorage.getItem('ilkikra_role');
+            const savedTid = localStorage.getItem('ilkikra_tid');
+            
+            if (savedRole === 'teacher' && savedTid === hId) {
+                isUnlocked = true;
+                currentRole = 'teacher';
+                currentTeacherId = hId;
+                document.getElementById('gateErrorMsg').classList.add('hidden');
+                showPanelScreen();
+                return; // Şifre kontrolüne girmeden direkt içeri alır
+            }
+
+            // Eğer hızlı giriş (önceden kaydedilmiş oturum) yoksa normal şifre sor:
+            const rawInput = document.getElementById('gatePasswordInput').value;
+            const pwdInput = String(rawInput).trim();
             const hoca = systemData.hocalar[hId];
+            
+            if (!hoca) {
+                document.getElementById('gateErrorMsg').innerText = "Hoca bulunamadı.";
+                document.getElementById('gateErrorMsg').classList.remove('hidden');
+                return;
+            }
+            
             const realTeacherPwd = String(hoca.sifre).trim();
 
-            if (hoca && realTeacherPwd === pwdInput) {
+            if (realTeacherPwd === pwdInput) {
                 isUnlocked = true;
                 currentRole = 'teacher';
                 currentTeacherId = hId;
                 
-                // Oturumu kalıcı kaydet
-                localStorage.setItem('ilkikra_role', 'teacher');
-                localStorage.setItem('ilkikra_tid', hId);
+                // Oturumu açık tut seçiliyse telefona kaydet
+                const rememberBox = document.getElementById('rememberMeCheck');
+                if (rememberBox && rememberBox.checked) {
+                    localStorage.setItem('ilkikra_role', 'teacher');
+                    localStorage.setItem('ilkikra_tid', hId);
+                }
                 
                 document.getElementById('gateErrorMsg').classList.add('hidden');
                 document.getElementById('gatePasswordInput').value = '';
@@ -576,6 +600,15 @@
         }
 
         function openAdminLoginModal() {
+            // 🟢 YENİ EKLENEN: YÖNETİCİ HIZLI GİRİŞ (Şifre Ekranını Atla)
+            const savedRole = localStorage.getItem('ilkikra_role');
+            if (savedRole === 'admin') {
+                isUnlocked = true;
+                currentRole = 'admin';
+                showPanelScreen();
+                return; // Modal açmadan direkt içeri girer
+            }
+
             document.getElementById('adminPasswordInput').value = '';
             document.getElementById('adminLoginErrorMsg').classList.add('hidden');
             document.getElementById('adminLoginModal').classList.remove('hidden');
