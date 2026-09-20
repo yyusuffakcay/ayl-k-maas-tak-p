@@ -102,7 +102,7 @@
                     <option value="" disabled selected>Hoca Seçiniz...</option>
                     <!-- JS ile Dolacak -->
                 </select>
-                <input type="password" id="gatePasswordInput" placeholder="Şifreniz" class="w-full text-center tracking-widest bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition">
+                <input type="password" id="gatePasswordInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Şifreniz" class="w-full text-center tracking-widest bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition">
                 <span id="gateErrorMsg" class="text-rose-500 text-xs mt-2 block hidden font-medium"><i class="fa-solid fa-triangle-exclamation"></i> Hatalı Şifre veya Seçim!</span>
             </div>
             <div class="flex items-center justify-center text-xs text-slate-500 gap-2 font-medium">
@@ -120,7 +120,7 @@
             <h3 class="font-serif text-lg font-bold text-slate-800 mb-2">Yönetici Girişi</h3>
             <p class="text-xs text-slate-500 mb-5">Lütfen sistem yönetici güvenlik kodunu girin.</p>
             
-            <input type="password" id="adminPasswordInput" placeholder="Güvenlik Kodu" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-accent mb-2">
+            <input type="password" id="adminPasswordInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" placeholder="Güvenlik Kodu" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-accent mb-2">
             <span id="adminLoginErrorMsg" class="text-rose-500 text-xs block hidden font-medium mb-4">Yetkisiz Erişim! Kod Hatalı.</span>
             
             <div class="flex gap-2 mt-4">
@@ -440,6 +440,7 @@
         let confirmActionCallback = null;
         let editingStudentId = null;
         let editingTeacherPwdId = null;
+        let expandedAdminLists = new Set(); // Açık olan listeleri hafızada tutmak için eklendi
 
         window.onload = async function() {
             try {
@@ -548,6 +549,7 @@
         function renderGateTeachers() {
             const select = document.getElementById('teacherSelectDropdown');
             if(!select) return;
+            const currentSelection = select.value; // Mevcut seçimi kaydet
             select.innerHTML = '<option value="" disabled selected>Kendi İsminizi Seçin...</option>';
             
             const hocalar = systemData.hocalar || {};
@@ -557,6 +559,10 @@
                 opt.innerText = hocalar[hId].isim;
                 select.appendChild(opt);
             });
+            
+            if (currentSelection && hocalar[currentSelection]) {
+                select.value = currentSelection; // Listeyi yeniledikten sonra seçimi geri yükle
+            }
         }
 
         function checkTeacherLogin() {
@@ -603,6 +609,7 @@
             if (input === realPwd) {
                 isUnlocked = true;
                 currentRole = 'admin';
+                localStorage.setItem('ilkikra_role', 'admin'); // Yönetici oturumunu da kaydet
                 closeAdminLoginModal();
                 showPanelScreen();
             } else {
@@ -666,7 +673,10 @@
                     const row = document.createElement('div');
                     row.className = "flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm";
                     row.innerHTML = `
-                        <div class="font-bold text-sm text-slate-800">${hoca.isim}</div>
+                        <div>
+                            <div class="font-bold text-sm text-slate-800">${hoca.isim}</div>
+                            <div class="text-[10px] text-slate-500 font-medium mt-0.5">Şifre: <span class="text-medrese-accent font-bold">${hoca.sifre}</span></div>
+                        </div>
                         <div class="flex gap-1.5">
                             <button onclick="openChangeTeacherPwd('${hId}')" class="bg-amber-50 hover:bg-amber-100 text-amber-600 text-[10px] font-bold px-2 py-1.5 rounded-lg transition" title="Şifre Değiştir"><i class="fa-solid fa-key"></i></button>
                             <button onclick="confirmDeleteTeacher('${hId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1.5 rounded-lg transition" title="Hocayı Sil"><i class="fa-solid fa-trash"></i></button>
@@ -694,7 +704,8 @@
                     let hocaExpected = 0;
                     let hocaPaid = 0;
                     
-                    let studentHtml = `<div class="space-y-1 mt-2 pl-2 border-l-2 border-slate-100 hidden" id="admin_st_list_${hId}">`;
+                    const isExpanded = expandedAdminLists.has(hId);
+                    let studentHtml = `<div class="space-y-1 mt-2 pl-2 border-l-2 border-slate-100 ${isExpanded ? '' : 'hidden'}" id="admin_st_list_${hId}">`;
                     
                     if (stKeys.length === 0) {
                         studentHtml += `<p class="text-[10px] text-slate-400 italic py-1">Kayıtlı talebe yok.</p>`;
@@ -729,14 +740,14 @@
                     const card = document.createElement('div');
                     card.className = "bg-white border border-slate-200 rounded-xl p-3 shadow-sm";
                     card.innerHTML = `
-                        <div class="flex justify-between items-center cursor-pointer" onclick="document.getElementById('admin_st_list_${hId}').classList.toggle('hidden')">
+                        <div class="flex justify-between items-center cursor-pointer" onclick="toggleAdminStudentList('${hId}')">
                             <div class="font-bold text-sm text-medrese-accent flex items-center gap-2">
                                 <i class="fa-solid fa-chalkboard-user"></i> ${hoca.isim}
                             </div>
                             <div class="flex items-center gap-3 text-[10px] font-bold">
                                 <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded-md" title="Öğrenci Sayısı"><i class="fa-solid fa-users"></i> ${stKeys.length}</span>
                                 <span class="bg-emerald-50 border border-emerald-100 text-emerald-700 px-2 py-1 rounded-md" title="Toplanan / Beklenen">${formatCurrency(hocaPaid)} / ${formatCurrency(hocaExpected)}</span>
-                                <i class="fa-solid fa-chevron-down text-slate-400"></i>
+                                <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}"></i>
                             </div>
                         </div>
                         ${studentHtml}
@@ -747,6 +758,21 @@
 
             document.getElementById('adminTotalExpected').innerText = adminFilterMonth === 7 ? "0 ₺" : formatCurrency(globalExpected);
             document.getElementById('adminTotalPaid').innerText = adminFilterMonth === 7 ? "0 ₺" : formatCurrency(globalPaid);
+        }
+
+        function toggleAdminStudentList(hId) {
+            const listEl = document.getElementById(`admin_st_list_${hId}`);
+            if (listEl) {
+                if (listEl.classList.contains('hidden')) {
+                    listEl.classList.remove('hidden');
+                    expandedAdminLists.add(hId);
+                    listEl.previousElementSibling.querySelector('.fa-chevron-down').classList.add('rotate-180');
+                } else {
+                    listEl.classList.add('hidden');
+                    expandedAdminLists.delete(hId);
+                    listEl.previousElementSibling.querySelector('.fa-chevron-down').classList.remove('rotate-180');
+                }
+            }
         }
 
         function changeAdminFilterMonth(val) { adminFilterMonth = parseInt(val); renderAdminPanel(); }
