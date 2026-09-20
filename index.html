@@ -245,22 +245,6 @@
                         </div>
                     </div>
 
-                    <!-- İstatistikler -->
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="bg-white border border-slate-200 rounded-xl p-2.5 text-center shadow-sm">
-                            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Planlanan (Eyl-Tem)</p>
-                            <h4 id="statExpected" class="text-xs sm:text-sm font-extrabold text-slate-700 mt-0.5">0 ₺</h4>
-                        </div>
-                        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-2.5 text-center shadow-sm">
-                            <p class="text-[9px] text-emerald-600 font-bold uppercase tracking-wider">Ödenen</p>
-                            <h4 id="statPaid" class="text-xs sm:text-sm font-extrabold text-emerald-700 mt-0.5">0 ₺</h4>
-                        </div>
-                        <div class="bg-rose-50 border border-rose-100 rounded-xl p-2.5 text-center shadow-sm">
-                            <p class="text-[9px] text-rose-600 font-bold uppercase tracking-wider">Kalan</p>
-                            <h4 id="statPending" class="text-xs sm:text-sm font-extrabold text-rose-700 mt-0.5">0 ₺</h4>
-                        </div>
-                    </div>
-
                     <!-- 12 Ay Matrisi (Ağustos Muaf!) -->
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" id="paymentGrid">
                         <!-- JS Dinamik -->
@@ -638,13 +622,11 @@
 
             const grid = document.getElementById('paymentGrid');
             grid.innerHTML = '';
-            let paidCount = 0;
 
             MONTHS.forEach((m, idx) => {
                 const cellKey = `${selectedYear}-${idx}`;
                 const isAugust = (idx === 7); 
                 const isPaid = !isAugust && st.odemeler && st.odemeler[cellKey] === true;
-                if (isPaid) paidCount++;
 
                 const cell = document.createElement('div');
                 if (isAugust) {
@@ -668,15 +650,6 @@
                 }
                 grid.appendChild(cell);
             });
-
-            const fee = parseFloat(st.ucret) || 0;
-            const expected = fee * 11; 
-            const paid = fee * paidCount;
-            const pending = expected - paid;
-
-            document.getElementById('statExpected').innerText = formatCurrency(expected);
-            document.getElementById('statPaid').innerText = formatCurrency(paid);
-            document.getElementById('statPending').innerText = formatCurrency(pending);
         }
 
         function togglePayment(cellKey) {
