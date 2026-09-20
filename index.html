@@ -104,7 +104,8 @@
         </div>
         <div class="w-full space-y-4">
             <div>
-                <select id="teacherSelectDropdown" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition mb-3">
+                <!-- onchange anında çalışmasın diye onfocus/onblur yönetimi eklendi -->
+                <select id="teacherSelectDropdown" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" onchange="secimYapildi(this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-medrese-emerald focus:ring-2 focus:ring-medrese-emerald/20 transition mb-3">
                     <option value="" disabled selected>Hoca Seçiniz...</option>
                     <!-- JS ile Dolacak -->
                 </select>
@@ -421,11 +422,8 @@
 
     <!-- JAVASCRIPT PROGRAM MANTIĞI -->
     <script>
-        // YEPYENİ FIREBASE LİNKİN (Lütfen sonuna / koyma kanka, sistem otomatik ayarlar)
-        const DB_URL = "https://yyusuffakcay-56280-default-rtdb.europe-west1.firebasedatabase.app";
-        
-        // Linkin sonundaki / işaretini (eğer sen yanlışlıkla koyarsan diye) otomatik silen güvenlik kalkanı:
-        const BASE_URL = DB_URL.endsWith('/') ? DB_URL.slice(0, -1) : DB_URL;
+        // ODA TAKİP MANTIĞIYLA AYNI YAPI (KÖK DİZİN YERİNE ALT KLASÖRE YAZIYORUZ Kİ CORS ENGELİNE TAKILMASIN)
+        const FIREBASE_URL = "https://yyusuffakcay-56280-default-rtdb.europe-west1.firebasedatabase.app/";
 
         const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
         const START_YEAR = 2026;
@@ -442,6 +440,7 @@
         let currentTeacherId = null; 
         
         let isUserTyping = false; 
+        let seciliGirisIsmi = ""; // Seçilen hoca adını tutmak için
         let selectedStudentId = null;
         let selectedYear = START_YEAR;
         let selectedFilterMonth = new Date().getMonth();
@@ -481,18 +480,16 @@
         }
 
         window.onload = async function() {
-            try {
-                fillMonthsDropdowns();
-                await syncWithCloud();
-                checkSavedSession();
-                
-                setInterval(async () => {
-                    if (!isUserTyping) await syncWithCloud();
-                }, 5000);
-            } catch (err) {
-                console.error("Başlangıç Hatası:", err);
-                loadFromLocalStorage();
-            }
+            fillMonthsDropdowns();
+            await verileriBuluttanCek();
+            checkSavedSession();
+            
+            // Oda takip sistemindeki gibi sürekli kontrol, ama fetch en sade haliyle!
+            setInterval(async () => {
+                if (!isUserTyping) {
+                    await verileriBuluttanCek();
+                }
+            }, 5000);
         };
 
         function fillMonthsDropdowns() {
@@ -512,35 +509,21 @@
             });
         }
 
-        // ÖNBELLEK KIRICI SİSTEM (Telefonun güvenlik duvarına çarpmaz, saf fetch atar!)
-        async function syncWithCloud() {
+        // TERTEMİZ ODA TAKİP FETCH MANTIĞI (Önbellek parametresi veya Header yok!)
+        async function verileriBuluttanCek() {
             setSyncStatus('syncing');
             try {
-                // SADECE zaman damgası gönderiyoruz, Headers YOK! Telefon bunu basit istek sanıp engellemez.
-                const response = await fetch(`${BASE_URL}.json?_t=${new Date().getTime()}`);
-
-                if (!response.ok) {
-                    if (response.status === 401 || response.status === 403) throw new Error("rules");
-                    throw new Error("net");
-                }
-
-                const data = await response.json();
+                // SADECE FETCH. Header yok. ?_t= yok. Direkt alt klasöre (.json) okuma.
+                let r = await fetch(FIREBASE_URL + "maas_takip_pro.json");
+                let data = await r.json();
                 
                 if (data && typeof data === 'object') {
                     systemData = data;
-                    
-                    if (systemData.ogrenciler && !systemData.hocalar) {
-                        systemData.hocalar = {
-                            'hoca_default': { isim: 'Yusuf Hoca', sifre: '9876', ogrenciler: systemData.ogrenciler }
-                        };
-                        delete systemData.ogrenciler;
-                        await uploadData();
-                    }
                     if(!systemData.sistem_ayarlari) systemData.sistem_ayarlari = { adminPassword: "İLK İKRA" };
                     if(!systemData.sistem_ayarlari.adminPassword) systemData.sistem_ayarlari.adminPassword = "İLK İKRA";
                     if(!systemData.hocalar) systemData.hocalar = {};
                 } else {
-                    await uploadData();
+                    await verileriBulutaKaydet(); // İlk defa açılıyorsa boş yapıyı kaydet
                 }
                 
                 setSyncStatus('ok');
@@ -549,46 +532,38 @@
                     if (!isUnlocked) renderGateTeachers();
                     else refreshActivePanel();
                 }
-
             } catch (err) {
-                if (err.message === "rules") {
-                    setSyncStatus('error_rules');
-                } else {
-                    setSyncStatus('error_net');
-                }
-                console.warn("Bulut eşleşemedi. Yerel hafıza devrede.", err);
+                setSyncStatus('error_net');
+                console.warn("Bulut okuma hatası", err);
                 loadFromLocalStorage();
             }
         }
 
+        // TERTEMİZ ODA TAKİP PUT MANTIĞI (Header yok!)
+        async function verileriBulutaKaydet() {
+            localStorage.setItem('ilkikra_maas_backup', JSON.stringify(systemData));
+            setSyncStatus('syncing');
+            try {
+                // SADECE PUT. Header eklemek telefonda CORS hatası verir (Oda Takipte vermemesinin sebebi bu)
+                await fetch(FIREBASE_URL + "maas_takip_pro.json", {
+                    method: 'PUT',
+                    body: JSON.stringify(systemData)
+                });
+                setSyncStatus('ok');
+            } catch (err) {
+                setSyncStatus('error_net');
+                console.warn("Bulut yazma hatası", err);
+            }
+        }
+
         function loadFromLocalStorage() {
-            const localData = localStorage.getItem('ilkikra_medrese_backup');
+            const localData = localStorage.getItem('ilkikra_maas_backup');
             if (localData) {
                 try { systemData = JSON.parse(localData); } catch(e) {}
             }
             if (!isUserTyping) {
                 if (!isUnlocked) renderGateTeachers();
                 else refreshActivePanel();
-            }
-        }
-
-        async function uploadData() {
-            localStorage.setItem('ilkikra_medrese_backup', JSON.stringify(systemData));
-            setSyncStatus('syncing');
-            try {
-                // Burada da Headers (Content-Type) YOK! Böylece telefonda "CORS Preflight" engeline takılmaz!
-                const response = await fetch(`${BASE_URL}.json`, {
-                    method: 'PUT',
-                    body: JSON.stringify(systemData)
-                });
-                if (response.ok) {
-                    setSyncStatus('ok');
-                } else {
-                    setSyncStatus('error_rules');
-                    showInfoModal("<i class='fa-solid fa-triangle-exclamation text-rose-500'></i>", "Kurallar Kapalı!", "Firebase'de Rules kısmını true yapmayı unutmuşsun kanka.");
-                }
-            } catch (err) {
-                setSyncStatus('error_net');
             }
         }
 
@@ -606,11 +581,17 @@
             }
         }
 
+        // Seçim yapıldığında değeri değişkene atar (klavye vs açıldığında resetlenmesin diye)
+        function secimYapildi(val) {
+            seciliGirisIsmi = val;
+        }
+
         function renderGateTeachers() {
             const select = document.getElementById('teacherSelectDropdown');
             if(!select) return;
-            const currentSelection = select.value;
-            select.innerHTML = '<option value="" disabled selected>Kendi İsminizi Seçin...</option>';
+            // Eğer daha önceden seçili bir isim varsa, onu hafızada tut.
+            const currentSelection = seciliGirisIsmi || select.value;
+            select.innerHTML = '<option value="" disabled selected>Hoca Seçiniz...</option>';
             
             const hocalar = systemData.hocalar || {};
             Object.keys(hocalar).forEach(hId => {
@@ -622,18 +603,14 @@
             
             if (currentSelection && hocalar[currentSelection]) {
                 select.value = currentSelection;
+                seciliGirisIsmi = currentSelection;
             }
-        }
-
-        function cleanString(val) {
-            if (val === null || val === undefined) return "";
-            return String(val).replace(/\s+/g, '').trim();
         }
 
         function checkTeacherLogin() {
             const select = document.getElementById('teacherSelectDropdown');
             const rawInput = document.getElementById('gatePasswordInput').value;
-            const pwdInput = cleanString(rawInput);
+            const pwdInput = String(rawInput).trim(); // Sayı da girilse metin (String) yapar
             const hId = select.value;
 
             if (!hId) {
@@ -643,7 +620,7 @@
             }
 
             const hoca = systemData.hocalar[hId];
-            const realTeacherPwd = cleanString(hoca.sifre);
+            const realTeacherPwd = String(hoca.sifre).trim();
 
             if (hoca && realTeacherPwd === pwdInput) {
                 isUnlocked = true;
@@ -671,12 +648,13 @@
         
         function checkAdminPassword() {
             const rawInput = document.getElementById('adminPasswordInput').value;
-            const input = cleanString(rawInput);
+            // Hem telefondaki hem de bilgisayardaki gereksiz boşlukları tamamen siler, büyütür
+            const input = String(rawInput).replace(/\s/g, '').toUpperCase();
             
             const rawPwd = systemData.sistem_ayarlari.adminPassword || "İLK İKRA";
-            const realPwd = cleanString(rawPwd);
+            const realPwd = String(rawPwd).replace(/\s/g, '').toUpperCase();
 
-            if (input.toLocaleUpperCase('tr-TR') === realPwd.toLocaleUpperCase('tr-TR') || input === realPwd) {
+            if (input === realPwd) {
                 isUnlocked = true;
                 currentRole = 'admin';
                 localStorage.setItem('ilkikra_role', 'admin'); 
@@ -691,6 +669,7 @@
             isUnlocked = false;
             currentRole = null;
             currentTeacherId = null;
+            seciliGirisIsmi = "";
             localStorage.removeItem('ilkikra_role');
             localStorage.removeItem('ilkikra_tid');
             showGateScreen();
@@ -849,14 +828,17 @@
             if(!systemData.hocalar) systemData.hocalar = {};
             systemData.hocalar[hId] = { isim: name, sifre: '9876', ogrenciler: {} };
             document.getElementById('newTeacherNameInput').value = '';
-            uploadData(); renderAdminPanel();
+            verileriBulutaKaydet(); 
+            renderAdminPanel();
         }
 
         function confirmDeleteTeacher(hId) {
             const hoca = systemData.hocalar[hId];
             confirmActionCallback = () => {
                 delete systemData.hocalar[hId];
-                uploadData(); renderAdminPanel(); closeConfirmModal();
+                verileriBulutaKaydet(); 
+                renderAdminPanel(); 
+                closeConfirmModal();
             };
             document.getElementById('confirmMessage').innerHTML = `<b>${hoca.isim}</b> adlı hocayı ve tüm sınıfını silmek istediğinize emin misiniz?`;
             document.getElementById('confirmModal').classList.remove('hidden');
@@ -870,10 +852,11 @@
         }
         function closeChangeTeacherPwdModal() { document.getElementById('changeTeacherPwdModal').classList.add('hidden'); }
         function executeChangeTeacherPwd() {
-            const pwd = document.getElementById('newTeacherPwdInput').value.trim();
+            const pwd = String(document.getElementById('newTeacherPwdInput').value).trim();
             if(!pwd) return;
             systemData.hocalar[editingTeacherPwdId].sifre = pwd;
-            uploadData(); closeChangeTeacherPwdModal();
+            verileriBulutaKaydet(); 
+            closeChangeTeacherPwdModal();
             showInfoModal("<i class='fa-solid fa-check text-emerald-500'></i>", "Başarılı", "Hoca şifresi güncellendi.");
         }
 
@@ -883,10 +866,11 @@
         }
         function closeChangeAdminPwdModal() { document.getElementById('changeAdminPwdModal').classList.add('hidden'); }
         function executeChangeAdminPwd() {
-            const pwd = document.getElementById('newAdminPwdInput').value.trim();
+            const pwd = String(document.getElementById('newAdminPwdInput').value).trim();
             if(!pwd) return;
             systemData.sistem_ayarlari.adminPassword = pwd;
-            uploadData(); closeChangeAdminPwdModal();
+            verileriBulutaKaydet(); 
+            closeChangeAdminPwdModal();
             showInfoModal("<i class='fa-solid fa-check text-emerald-500'></i>", "Başarılı", "Yönetici şifresi güncellendi.");
         }
 
@@ -1051,7 +1035,8 @@
             if (!st) return;
             if (!st.odemeler) st.odemeler = {};
             st.odemeler[cellKey] = !st.odemeler[cellKey];
-            uploadData(); refreshUI();
+            verileriBulutaKaydet(); 
+            refreshUI();
         }
 
         function openAddStudentModal() {
@@ -1094,7 +1079,9 @@
                 ogrs[newId] = { ad: name, ucret: fee, veli_tel: phone, odemeler: {} };
                 selectedStudentId = newId;
             }
-            uploadData(); closeStudentModal(); refreshUI();
+            verileriBulutaKaydet(); 
+            closeStudentModal(); 
+            refreshUI();
         }
 
         function deleteStudent(stId) {
@@ -1103,7 +1090,9 @@
             confirmActionCallback = () => {
                 delete systemData.hocalar[currentTeacherId].ogrenciler[stId];
                 if (selectedStudentId === stId) selectedStudentId = null;
-                uploadData(); refreshUI(); closeConfirmModal();
+                verileriBulutaKaydet(); 
+                refreshUI(); 
+                closeConfirmModal();
             };
             document.getElementById('confirmMessage').innerText = `"${st.ad}" isimli talebeyi silmek istediğinize emin misiniz?`;
             document.getElementById('confirmModal').classList.remove('hidden');
@@ -1139,7 +1128,7 @@
             document.getElementById('wpModal').classList.remove('hidden');
         }
         function closeWpModal() { document.getElementById('wpModal').classList.add('hidden'); refreshUI(); }
-        function saveWpPhone(stId, val) { if (systemData.hocalar[currentTeacherId].ogrenciler[stId]) { systemData.hocalar[currentTeacherId].ogrenciler[stId].veli_tel = val.trim(); uploadData(); } }
+        function saveWpPhone(stId, val) { if (systemData.hocalar[currentTeacherId].ogrenciler[stId]) { systemData.hocalar[currentTeacherId].ogrenciler[stId].veli_tel = val.trim(); verileriBulutaKaydet(); } }
         
         function sendWpMessage(stId) {
             const student = getTeacherStudents()[stId];
