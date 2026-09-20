@@ -86,7 +86,7 @@
 </head>
 <body class="font-sans text-slate-800 min-h-screen p-3 sm:p-6 flex flex-col items-center justify-center">
 
-    <!-- 🟢 YENİ: BAĞLANTI DURUM GÖSTERGESİ -->
+    <!-- 🟢 BAĞLANTI DURUM GÖSTERGESİ (RADAR) -->
     <div id="syncStatus" class="fixed bottom-3 right-3 flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1.5 rounded-full bg-white border border-slate-200 shadow-md z-50 transition-all">
         <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="syncDot"></span> 
         <span id="syncText" class="text-slate-600">Bağlanıyor...</span>
@@ -263,7 +263,7 @@
                 </div>
             </div>
 
-            <!-- Sağ Sütun: Takvim -->
+            <!-- Sağ Sütun: Takvim ve İstatistikler -->
             <div id="calendarPanel" class="bg-slate-50/50 border border-slate-200 rounded-2xl p-4 flex flex-col min-h-[350px]">
                 
                 <!-- Sınıf Özeti Raporu -->
@@ -315,7 +315,6 @@
 
 
     <!-- 📋 MODALLAR -->
-
     <!-- Admin Şifre Değiştirme Modali -->
     <div id="changeAdminPwdModal" class="modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4 hidden">
         <div class="modal-content bg-white max-w-sm w-full p-5 rounded-2xl shadow-2xl border border-slate-200">
@@ -421,7 +420,7 @@
     </div>
 
     <script>
-        // KULLANICIYA AİT YEPYENİ FIREBASE LİNKİ EKLENDİ
+        // KULLANICIYA AİT YEPYENİ FIREBASE LİNKİ (Sondaki / kaldırıldı)
         const DB_URL = "https://yyusuffakcay-56280-default-rtdb.europe-west1.firebasedatabase.app";
         
         const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
@@ -447,9 +446,9 @@
         let confirmActionCallback = null;
         let editingStudentId = null;
         let editingTeacherPwdId = null;
-        let expandedAdminLists = new Set();
+        let expandedAdminLists = new Set(); // Yönetici panelindeki açık listeleri tutar
 
-        // 🟢 YENİ: BAĞLANTI DURUMUNU GÖSTEREN FONKSİYON
+        // 🟢 BAĞLANTI DURUMUNU GÖSTEREN FONKSİYON
         function setSyncStatus(status) {
             const dot = document.getElementById('syncDot');
             const txt = document.getElementById('syncText');
@@ -466,14 +465,14 @@
                 txt.className = 'text-rose-600';
             }
             else if(status === 'error_net') { 
-                dot.className = 'w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_5px_#f43f5e]'; 
+                dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_5px_#f59e0b]'; 
                 txt.innerText = 'İnternet Engeli!'; 
-                txt.className = 'text-rose-600';
+                txt.className = 'text-amber-700';
             }
             else if(status === 'syncing') { 
-                dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_5px_#f59e0b]'; 
+                dot.className = 'w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_5px_#3b82f6]'; 
                 txt.innerText = 'Eşitleniyor...'; 
-                txt.className = 'text-amber-700';
+                txt.className = 'text-blue-700';
             }
         }
 
@@ -509,52 +508,60 @@
             });
         }
 
+        // ÖNBELLEK KIRICI SİSTEM (Telefonun hafızadan çekmesini engeller)
         async function syncWithCloud() {
             setSyncStatus('syncing');
-            return new Promise((resolve) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', `${DB_URL}.json?_t=` + new Date().getTime(), true);
-                xhr.onload = async function() {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        try {
-                            const data = JSON.parse(xhr.responseText);
-                            if (data && typeof data === 'object') {
-                                systemData = data;
-                                
-                                if (systemData.ogrenciler && !systemData.hocalar) {
-                                    systemData.hocalar = {
-                                        'hoca_default': { isim: 'Yusuf Hoca', sifre: '9876', ogrenciler: systemData.ogrenciler }
-                                    };
-                                    delete systemData.ogrenciler;
-                                    await uploadData();
-                                }
-                                if(!systemData.sistem_ayarlari) systemData.sistem_ayarlari = { adminPassword: "İLK İKRA" };
-                                if(!systemData.sistem_ayarlari.adminPassword) systemData.sistem_ayarlari.adminPassword = "İLK İKRA";
-                                if(!systemData.hocalar) systemData.hocalar = {};
-                            } else {
-                                await uploadData();
-                            }
-                            
-                            setSyncStatus('ok');
-                            
-                            if (!isUserTyping) {
-                                if (!isUnlocked) renderGateTeachers();
-                                else refreshActivePanel();
-                            }
-                        } catch(e) {}
-                    } else if(xhr.status === 401 || xhr.status === 403) {
-                        setSyncStatus('error_rules');
+            try {
+                // cache: 'no-store' ve zaman damgası (_t) ile tarayıcı önbelleği tamamen iptal edildi
+                const response = await fetch(`${DB_URL}.json?_t=${new Date().getTime()}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
                     }
-                    resolve();
-                };
-                xhr.onerror = function() {
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) throw new Error("rules");
+                    throw new Error("net");
+                }
+
+                const data = await response.json();
+                
+                if (data && typeof data === 'object') {
+                    systemData = data;
+                    
+                    // Eski sistemden (sadece ogrenciler varken) yeni sisteme göç
+                    if (systemData.ogrenciler && !systemData.hocalar) {
+                        systemData.hocalar = {
+                            'hoca_default': { isim: 'Yusuf Hoca', sifre: '9876', ogrenciler: systemData.ogrenciler }
+                        };
+                        delete systemData.ogrenciler;
+                        await uploadData();
+                    }
+                    if(!systemData.sistem_ayarlari) systemData.sistem_ayarlari = { adminPassword: "İLK İKRA" };
+                    if(!systemData.sistem_ayarlari.adminPassword) systemData.sistem_ayarlari.adminPassword = "İLK İKRA";
+                    if(!systemData.hocalar) systemData.hocalar = {};
+                } else {
+                    await uploadData();
+                }
+                
+                setSyncStatus('ok');
+                
+                if (!isUserTyping) {
+                    if (!isUnlocked) renderGateTeachers();
+                    else refreshActivePanel();
+                }
+
+            } catch (err) {
+                if (err.message === "rules") {
+                    setSyncStatus('error_rules');
+                } else {
                     setSyncStatus('error_net');
-                    console.warn("Bulut eşleşemedi. Yerel hafıza devrede.");
-                    loadFromLocalStorage();
-                    resolve();
-                };
-                xhr.send();
-            });
+                }
+                console.warn("Bulut eşleşemedi. Yerel hafıza devrede.", err);
+                loadFromLocalStorage();
+            }
         }
 
         function loadFromLocalStorage() {
@@ -571,29 +578,23 @@
         async function uploadData() {
             localStorage.setItem('ilkikra_medrese_backup', JSON.stringify(systemData));
             setSyncStatus('syncing');
-            return new Promise((resolve) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('PUT', `${DB_URL}.json`, true);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.onload = function() {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        setSyncStatus('ok');
-                    } else {
-                        setSyncStatus('error_rules');
-                        showInfoModal("<i class='fa-solid fa-triangle-exclamation text-rose-500'></i>", "Kurallar Kapalı!", "Firebase'de Rules kısmını true yapmayı unutmuşsun kanka.");
-                    }
-                    resolve();
-                };
-                xhr.onerror = function() {
-                    setSyncStatus('error_net');
-                    showInfoModal("<i class='fa-solid fa-wifi text-amber-500'></i>", "İnternet Engeli", "Telefon dosyaya internet izni vermiyor. Sağ üstten 'Chrome ile Aç' demeyi unutma.");
-                    resolve();
-                };
-                xhr.send(JSON.stringify(systemData));
-            });
+            try {
+                const response = await fetch(`${DB_URL}.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(systemData)
+                });
+                if (response.ok) {
+                    setSyncStatus('ok');
+                } else {
+                    setSyncStatus('error_rules');
+                    showInfoModal("<i class='fa-solid fa-triangle-exclamation text-rose-500'></i>", "Kurallar Kapalı!", "Firebase'de Rules kısmını true yapmayı unutmuşsun kanka.");
+                }
+            } catch (err) {
+                setSyncStatus('error_net');
+            }
         }
 
-        // --- GİRİŞ & OTURUM (GATE) ---
         function checkSavedSession() {
             const role = localStorage.getItem('ilkikra_role');
             const tid = localStorage.getItem('ilkikra_tid');
@@ -627,16 +628,16 @@
             }
         }
 
-        function cleanString(str) {
-            // Boşlukları ve gereksiz gizli karakterleri tamamen temizleyen güvenli fonksiyon
-            if (!str) return "";
-            return String(str).replace(/\s+/g, '').trim();
+        function cleanString(val) {
+            // "12345" gibi sayılar geldiğinde kodun çökmesini engellemek için önce kesinlikle String'e çeviriyoruz
+            if (val === null || val === undefined) return "";
+            return String(val).replace(/\s+/g, '').trim();
         }
 
         function checkTeacherLogin() {
             const select = document.getElementById('teacherSelectDropdown');
             const rawInput = document.getElementById('gatePasswordInput').value;
-            const pwdInput = cleanString(rawInput); // Tüm boşlukları yok eder
+            const pwdInput = cleanString(rawInput);
             const hId = select.value;
 
             if (!hId) {
@@ -674,11 +675,12 @@
         
         function checkAdminPassword() {
             const rawInput = document.getElementById('adminPasswordInput').value;
-            const input = cleanString(rawInput); // Boşluksuz tertemiz string
+            const input = cleanString(rawInput);
+            
             const rawPwd = systemData.sistem_ayarlari.adminPassword || "İLK İKRA";
             const realPwd = cleanString(rawPwd);
 
-            // Büyüterek de kıyaslarız (sayılar etkilenmez, harfler eşitlenir)
+            // Büyüterek kıyaslıyoruz, sayılar varsa ("12345" gibi) hata vermeden geçer çünkü stringe çevrildi
             if (input.toLocaleUpperCase('tr-TR') === realPwd.toLocaleUpperCase('tr-TR') || input === realPwd) {
                 isUnlocked = true;
                 currentRole = 'admin';
@@ -728,7 +730,6 @@
             else if (currentRole === 'teacher') refreshUI();
         }
 
-        // 👑 YÖNETİCİ FONKSİYONLARI 
         function renderAdminPanel() {
             const hocalar = systemData.hocalar || {};
             const keys = Object.keys(hocalar);
@@ -894,7 +895,6 @@
             showInfoModal("<i class='fa-solid fa-check text-emerald-500'></i>", "Başarılı", "Yönetici şifresi güncellendi.");
         }
 
-        // 👤 BİREYSEL HOCA FONKSİYONLARI
         function getTeacherStudents() {
             if(!currentTeacherId || !systemData.hocalar[currentTeacherId]) return {};
             return systemData.hocalar[currentTeacherId].ogrenciler || {};
