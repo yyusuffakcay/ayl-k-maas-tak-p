@@ -145,6 +145,9 @@
                 <p class="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Tüm hocaları ve medrese finans durumunu buradan yönetin.</p>
             </div>
             <div class="flex gap-2">
+                <button onclick="goBackToGate()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1">
+                    <i class="fa-solid fa-house"></i> Ana Ekran
+                </button>
                 <button onclick="openChangeAdminPasswordModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1">
                     <i class="fa-solid fa-key"></i> Şifre Değiş
                 </button>
@@ -198,6 +201,9 @@
                 <p class="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Medrese Aidat &amp; Sınıf Takip Masası (Bireysel ✅)</p>
             </div>
             <div class="flex gap-2">
+                <button onclick="goBackToGate()" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1 shadow-sm">
+                    <i class="fa-solid fa-house"></i> Ana Ekran
+                </button>
                 <button onclick="logout()" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center gap-1 shadow-sm">
                     <i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap
                 </button>
@@ -355,9 +361,6 @@
             </div>
             <p class="text-[10px] text-slate-500 mb-2 flex-shrink-0 font-bold uppercase tracking-wider">İletişim Listesi (Toplu Gönderim):</p>
             <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar mb-3" id="bulkWpList"></div>
-            <button onclick="sendBulkWpAll()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2">
-                <i class="fa-brands fa-whatsapp text-sm"></i> Tüm Listeye Sırayla Gönder
-            </button>
         </div>
     </div>
 
@@ -640,6 +643,12 @@
             document.getElementById('gateScreen').classList.remove('hidden');
             document.getElementById('mainPanel').classList.add('hidden');
             document.getElementById('adminPanel').classList.add('hidden');
+        }
+
+        function goBackToGate() {
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('mainPanel').classList.add('hidden');
+            document.getElementById('gateScreen').classList.remove('hidden');
         }
 
         function showPanelScreen() {
@@ -1123,37 +1132,36 @@
                 const rawPhone = student.veli_tel || '';
                 const row = document.createElement('div');
                 row.className = "flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs";
-                row.innerHTML = `<div class="text-left"><p class="font-bold text-slate-800">${student.ad}</p><p class="text-[10px] text-slate-500 font-medium">Veli: ${rawPhone || 'Yok'}</p></div><span class="text-emerald-600 font-bold text-[10px]"><i class="fa-solid fa-check"></i> Listede</span>`;
+                row.innerHTML = `
+                    <div class="text-left">
+                        <p class="font-bold text-slate-800">${student.ad}</p>
+                        <p class="text-[10px] text-slate-500 font-medium">Veli: ${rawPhone || 'Yok'}</p>
+                    </div>
+                    <button onclick="sendBulkWpIndividual('${rawPhone}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] py-1.5 px-3 rounded-lg flex items-center gap-1 transition shadow-sm">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> Gönder
+                    </button>
+                `;
                 listEl.appendChild(row);
             });
             document.getElementById('bulkWpModal').classList.remove('hidden');
         }
         function closeBulkWpModal() { document.getElementById('bulkWpModal').classList.add('hidden'); }
         
-        // Düzeltilmiş toplu gönderim fonksiyonu
-        function sendBulkWpAll() {
-            const customMsg = document.getElementById('bulkWpMessageInput').value.trim();
-            if (!customMsg) { showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Uyarı", "Lütfen mesaj yazın."); return; }
-            
-            const students = getTeacherStudents();
-            let count = 0;
-            Object.keys(students).forEach(stId => {
-                const student = students[stId];
-                let rawPhone = student.veli_tel || '';
-                let cleanPhone = rawPhone.replace(/\s+/g, '').replace(/[^0-9]/g, '');
-                if (cleanPhone) {
-                    if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) cleanPhone = '90' + cleanPhone;
-                    setTimeout(() => {
-                        window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(customMsg)}`, '_blank');
-                    }, count * 600); // Tarayıcı engelini aşmak için hafif gecikmeli açılır
-                    count++;
-                }
-            });
-            if (count === 0) {
-                showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Uyarı", "Gönderilebilecek geçerli telefon numarası bulunamadı.");
-            } else {
-                closeBulkWpModal();
+        function sendBulkWpIndividual(rawPhone) {
+            let cleanPhone = rawPhone.replace(/\s+/g, '').replace(/[^0-9]/g, '');
+            if (!cleanPhone) { 
+                showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Uyarı", "Geçerli telefon numarası bulunamadı."); 
+                return; 
             }
+            if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) cleanPhone = '90' + cleanPhone;
+            
+            const customMsg = document.getElementById('bulkWpMessageInput').value.trim();
+            if (!customMsg) { 
+                showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Uyarı", "Lütfen gönderilecek ortak mesajı yazın."); 
+                return; 
+            }
+            
+            window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(customMsg)}`, '_blank');
         }
 
         function showInfoModal(iconHtml, title, msg) { document.getElementById('infoModalIcon').innerHTML = iconHtml; document.getElementById('infoModalTitle').innerText = title; document.getElementById('infoModalMsg').innerText = msg; document.getElementById('infoModal').classList.remove('hidden'); }
