@@ -220,9 +220,6 @@
                         <button onclick="openWpModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] py-1.5 px-2 rounded-lg flex items-center gap-1 transition shadow-sm">
                             <i class="fa-brands fa-whatsapp"></i> Veli WP
                         </button>
-                        <button onclick="openBulkWpModal()" class="bg-amber-100 hover:bg-amber-200 text-amber-700 font-bold text-[11px] py-1.5 px-2 rounded-lg flex items-center gap-1 transition">
-                            <i class="fa-solid fa-comments"></i> Toplu WP
-                        </button>
                         <button onclick="openAddStudentModal()" class="bg-medrese-accent hover:bg-emerald-800 text-white font-bold text-[11px] py-1.5 px-2 rounded-lg flex items-center gap-1 transition shadow-sm">
                             <i class="fa-solid fa-plus"></i> Ekle
                         </button>
@@ -344,23 +341,6 @@
             </div>
             <p class="text-[10px] text-slate-500 mb-3 flex-shrink-0">Talebelerin veli numaralarını kaydedip teşekkür mesajı gönderebilirsiniz.</p>
             <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar" id="wpModalStudentList"></div>
-        </div>
-    </div>
-
-    <div id="bulkWpModal" class="modal fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1200] flex items-center justify-center p-4 hidden">
-        <div class="modal-content bg-white max-w-md w-full p-5 rounded-3xl border border-slate-200 shadow-2xl max-h-[85vh] flex flex-col">
-            <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4 flex-shrink-0">
-                <h3 class="font-serif text-sm font-bold text-medrese-accent flex items-center gap-1.5">
-                    <i class="fa-solid fa-comments text-amber-500"></i> Toplu WP Mesaj Masası
-                </h3>
-                <button onclick="closeBulkWpModal()" class="text-slate-400 hover:text-rose-500 transition text-sm"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-2 flex-shrink-0 mb-4">
-                <label class="text-[10px] text-slate-500 font-bold block uppercase tracking-wider">Gönderilecek Ortak Mesaj:</label>
-                <textarea id="bulkWpMessageInput" onfocus="isUserTyping = true;" onblur="isUserTyping = false;" rows="3" placeholder="Sınıf velilerine ortak mesajı buraya yazın..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-400 resize-none"></textarea>
-            </div>
-            <p class="text-[10px] text-slate-500 mb-2 flex-shrink-0 font-bold uppercase tracking-wider">İletişim Listesi (Toplu Gönderim):</p>
-            <div class="flex-grow overflow-y-auto space-y-2 pr-1 no-scrollbar mb-3" id="bulkWpList"></div>
         </div>
     </div>
 
@@ -1118,50 +1098,6 @@
             if (!cleanPhone) { showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Numara Eksik!", "Veli numarası yok."); return; }
             if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) cleanPhone = '90' + cleanPhone;
             window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(`İlkikra Medresesi: ${student.ad} isimli talebemizin ${MONTHS[selectedFilterMonth]} ayı aidatı ödenmiştir. Teşekkür ederiz.`)}`, '_blank');
-        }
-
-        function openBulkWpModal() {
-            const listEl = document.getElementById('bulkWpList');
-            listEl.innerHTML = '';
-            document.getElementById('bulkWpMessageInput').value = `İlkikra Medresesi: Saygıdeğer velimiz, durum güncellenmiştir.`;
-            const students = getTeacherStudents();
-            const keys = Object.keys(students).filter(k => students[k] && students[k].ad);
-            if (keys.length === 0) listEl.innerHTML = `<div class="text-center py-4 text-slate-500 text-xs font-medium">Sınıfınızda kayıtlı öğrenci yok.</div>`;
-            else keys.forEach(stId => {
-                const student = students[stId];
-                const rawPhone = student.veli_tel || '';
-                const row = document.createElement('div');
-                row.className = "flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs";
-                row.innerHTML = `
-                    <div class="text-left">
-                        <p class="font-bold text-slate-800">${student.ad}</p>
-                        <p class="text-[10px] text-slate-500 font-medium">Veli: ${rawPhone || 'Yok'}</p>
-                    </div>
-                    <button onclick="sendBulkWpIndividual('${rawPhone}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] py-1.5 px-3 rounded-lg flex items-center gap-1 transition shadow-sm">
-                        <i class="fa-brands fa-whatsapp text-sm"></i> Gönder
-                    </button>
-                `;
-                listEl.appendChild(row);
-            });
-            document.getElementById('bulkWpModal').classList.remove('hidden');
-        }
-        function closeBulkWpModal() { document.getElementById('bulkWpModal').classList.add('hidden'); }
-        
-        function sendBulkWpIndividual(rawPhone) {
-            let cleanPhone = rawPhone.replace(/\s+/g, '').replace(/[^0-9]/g, '');
-            if (!cleanPhone) { 
-                showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Uyarı", "Geçerli telefon numarası bulunamadı."); 
-                return; 
-            }
-            if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) cleanPhone = '90' + cleanPhone;
-            
-            const customMsg = document.getElementById('bulkWpMessageInput').value.trim();
-            if (!customMsg) { 
-                showInfoModal("<i class='fa-solid fa-triangle-exclamation text-amber-500'></i>", "Uyarı", "Lütfen gönderilecek ortak mesajı yazın."); 
-                return; 
-            }
-            
-            window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(customMsg)}`, '_blank');
         }
 
         function showInfoModal(iconHtml, title, msg) { document.getElementById('infoModalIcon').innerHTML = iconHtml; document.getElementById('infoModalTitle').innerText = title; document.getElementById('infoModalMsg').innerText = msg; document.getElementById('infoModal').classList.remove('hidden'); }
