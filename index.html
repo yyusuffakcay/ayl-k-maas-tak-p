@@ -496,19 +496,18 @@
             }
         }
 
-        // Oturum kontrolü geliştirildi (Artık çıkış yapılana kadar kalıcı)
         function checkSavedSession() {
-            const role = localStorage.getItem('ilkikra_role');
-            const tid = localStorage.getItem('ilkikra_tid');
-            if (role) {
+            // Eğer yönetici olarak kalıcı giriş yapıldıysa direkt admin panelini aç
+            const isAdminSaved = localStorage.getItem('ilkikra_admin');
+            if (isAdminSaved === 'true') {
                 isUnlocked = true;
-                currentRole = role;
-                currentTeacherId = tid;
+                currentRole = 'admin';
                 showPanelScreen();
-            } else {
-                renderGateTeachers();
-                showGateScreen();
+                return;
             }
+            // Hocalar için ana ekranı göster (İsim seçince otomatik girecekler)
+            renderGateTeachers();
+            showGateScreen();
         }
 
         function secimYapildi(val) {
@@ -535,7 +534,6 @@
             }
         }
 
-        // Enter tuşu desteği
         function handleGateKeypress(e) {
             if (e.key === 'Enter') {
                 checkTeacherLogin();
@@ -552,20 +550,19 @@
                 return;
             }
 
-            // 🟢 YENİ EKLENEN: HIZLI GİRİŞ KONTROLÜ (Şifresiz Bypass)
-            const savedRole = localStorage.getItem('ilkikra_role');
-            const savedTid = localStorage.getItem('ilkikra_tid');
+            // HAFZA 1 (BİREYSEL HOCA HAFIZASI): Bu hocanın şifresi daha önce girildiyse Bypass yap
+            const isTeacherSaved = localStorage.getItem('ilkikra_teacher_' + hId);
             
-            if (savedRole === 'teacher' && savedTid === hId) {
+            if (isTeacherSaved === 'true') {
                 isUnlocked = true;
                 currentRole = 'teacher';
                 currentTeacherId = hId;
                 document.getElementById('gateErrorMsg').classList.add('hidden');
                 showPanelScreen();
-                return; // Şifre kontrolüne girmeden direkt içeri alır
+                return;
             }
 
-            // Eğer hızlı giriş (önceden kaydedilmiş oturum) yoksa normal şifre sor:
+            // Hafızada yoksa şifre sor
             const rawInput = document.getElementById('gatePasswordInput').value;
             const pwdInput = String(rawInput).trim();
             const hoca = systemData.hocalar[hId];
@@ -583,11 +580,10 @@
                 currentRole = 'teacher';
                 currentTeacherId = hId;
                 
-                // Oturumu açık tut seçiliyse telefona kaydet
                 const rememberBox = document.getElementById('rememberMeCheck');
                 if (rememberBox && rememberBox.checked) {
-                    localStorage.setItem('ilkikra_role', 'teacher');
-                    localStorage.setItem('ilkikra_tid', hId);
+                    // Sadece seçilen hocaya özel şifreyi hatırla
+                    localStorage.setItem('ilkikra_teacher_' + hId, 'true'); 
                 }
                 
                 document.getElementById('gateErrorMsg').classList.add('hidden');
@@ -600,22 +596,22 @@
         }
 
         function openAdminLoginModal() {
-            // 🟢 YENİ EKLENEN: YÖNETİCİ HIZLI GİRİŞ (Şifre Ekranını Atla)
-            const savedRole = localStorage.getItem('ilkikra_role');
-            if (savedRole === 'admin') {
+            // HAFZA 2 (YÖNETİCİ HAFIZASI): Yönetici şifresi daha önce doğru girildiyse Bypass yap
+            const isAdminSaved = localStorage.getItem('ilkikra_admin');
+            if (isAdminSaved === 'true') {
                 isUnlocked = true;
                 currentRole = 'admin';
                 showPanelScreen();
-                return; // Modal açmadan direkt içeri girer
+                return; 
             }
 
             document.getElementById('adminPasswordInput').value = '';
             document.getElementById('adminLoginErrorMsg').classList.add('hidden');
             document.getElementById('adminLoginModal').classList.remove('hidden');
         }
+        
         function closeAdminLoginModal() { document.getElementById('adminLoginModal').classList.add('hidden'); }
         
-        // Enter tuşu desteği
         function handleAdminKeypress(e) {
             if (e.key === 'Enter') {
                 checkAdminPassword();
@@ -632,8 +628,7 @@
             if (input === realPwd) {
                 isUnlocked = true;
                 currentRole = 'admin';
-                localStorage.setItem('ilkikra_role', 'admin'); 
-                localStorage.removeItem('ilkikra_tid');
+                localStorage.setItem('ilkikra_admin', 'true'); // Sadece yönetici girişini hatırla
                 closeAdminLoginModal();
                 showPanelScreen();
             } else {
@@ -642,12 +637,18 @@
         }
 
         function logout() {
+            // Çıkış yap butonuna basıldığında SADECE o an açık olan hesabın hafızasını siler.
+            // (Yani yöneticiden çıkarsan, hocanın şifresi silinmez)
+            if (currentRole === 'admin') {
+                localStorage.removeItem('ilkikra_admin');
+            } else if (currentRole === 'teacher' && currentTeacherId) {
+                localStorage.removeItem('ilkikra_teacher_' + currentTeacherId);
+            }
+
             isUnlocked = false;
             currentRole = null;
             currentTeacherId = null;
             seciliGirisIsmi = "";
-            localStorage.removeItem('ilkikra_role');
-            localStorage.removeItem('ilkikra_tid');
             showGateScreen();
             renderGateTeachers();
         }
@@ -662,6 +663,12 @@
             document.getElementById('adminPanel').classList.add('hidden');
             document.getElementById('mainPanel').classList.add('hidden');
             document.getElementById('gateScreen').classList.remove('hidden');
+            
+            // 1. SORUNUN ÇÖZÜMÜ: Ana ekrana dönüldüğünde hoca listesini anında yenile
+            renderGateTeachers(); 
+            
+            // Arka planda karışıklık çıkmaması için rolü geçici olarak sıfırla
+            currentRole = null; 
         }
 
         function showPanelScreen() {
