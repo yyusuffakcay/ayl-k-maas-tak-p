@@ -86,6 +86,12 @@
 </head>
 <body class="font-sans text-slate-800 min-h-screen p-3 sm:p-6 flex flex-col items-center justify-center">
 
+    <!-- 🟢 YENİ: BAĞLANTI DURUM GÖSTERGESİ -->
+    <div id="syncStatus" class="fixed bottom-3 right-3 flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1.5 rounded-full bg-white border border-slate-200 shadow-md z-50 transition-all">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="syncDot"></span> 
+        <span id="syncText" class="text-slate-600">Bağlanıyor...</span>
+    </div>
+
     <!-- 🚪 1. GÜVENLİK GİRİŞ KAPISI -->
     <div id="gateScreen" class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center gap-6">
         <div class="text-medrese-emerald text-5xl sm:text-6xl animate-pulse drop-shadow-md">
@@ -443,6 +449,34 @@
         let editingTeacherPwdId = null;
         let expandedAdminLists = new Set();
 
+        // 🟢 YENİ: BAĞLANTI DURUMUNU GÖSTEREN FONKSİYON
+        function setSyncStatus(status) {
+            const dot = document.getElementById('syncDot');
+            const txt = document.getElementById('syncText');
+            if(!dot || !txt) return;
+            
+            if(status === 'ok') { 
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]'; 
+                txt.innerText = 'Bulut Güncel'; 
+                txt.className = 'text-emerald-700';
+            }
+            else if(status === 'error_rules') { 
+                dot.className = 'w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_5px_#f43f5e]'; 
+                txt.innerText = 'Kurallar Kapalı!'; 
+                txt.className = 'text-rose-600';
+            }
+            else if(status === 'error_net') { 
+                dot.className = 'w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_5px_#f43f5e]'; 
+                txt.innerText = 'İnternet Engeli!'; 
+                txt.className = 'text-rose-600';
+            }
+            else if(status === 'syncing') { 
+                dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_5px_#f59e0b]'; 
+                txt.innerText = 'Eşitleniyor...'; 
+                txt.className = 'text-amber-700';
+            }
+        }
+
         window.onload = async function() {
             try {
                 fillMonthsDropdowns();
@@ -476,9 +510,13 @@
         }
 
         async function syncWithCloud() {
+            setSyncStatus('syncing');
             try {
                 const response = await fetch(`${DB_URL}.json?_t=` + new Date().getTime(), { cache: 'no-store' });
-                if (!response.ok) throw new Error("Veritabanı bağlantısı yok veya erişim izni (Rules) kapalı.");
+                if (!response.ok) {
+                    setSyncStatus('error_rules');
+                    throw new Error("Veritabanı bağlantısı yok veya erişim izni (Rules) kapalı.");
+                }
                 const data = await response.json();
                 
                 if (data && typeof data === 'object') {
@@ -499,11 +537,14 @@
                     await uploadData();
                 }
                 
+                setSyncStatus('ok');
+                
                 if (!isUserTyping) {
                     if (!isUnlocked) renderGateTeachers();
                     else refreshActivePanel();
                 }
             } catch (err) {
+                if (err.message.includes("fetch") || err.message.includes("Network")) setSyncStatus('error_net');
                 console.warn("Bulut eşleşemedi. Yerel hafıza devrede.", err);
                 loadFromLocalStorage();
             }
@@ -522,14 +563,24 @@
 
         async function uploadData() {
             localStorage.setItem('ilkikra_medrese_backup', JSON.stringify(systemData));
+            setSyncStatus('syncing');
             try {
                 const response = await fetch(`${DB_URL}.json`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(systemData)
                 });
-                if (!response.ok) console.error("Kayıt Başarısız. Firebase Rules kapalı olabilir.");
+                
+                if (!response.ok) {
+                    setSyncStatus('error_rules');
+                    showInfoModal("<i class='fa-solid fa-triangle-exclamation text-rose-500'></i>", "Veritabanı Kayıt Hatası", "Kanka, yeni açtığın veritabanında 'Rules' kısmını true yapmayı unutmuşsun! Bu yüzden telefondan kaydettiklerin buluta gitmiyor. Firebase'e girip düzelt.");
+                    console.error("Kayıt Başarısız. Firebase Rules kapalı olabilir.");
+                } else {
+                    setSyncStatus('ok');
+                }
             } catch(e) {
+                setSyncStatus('error_net');
+                showInfoModal("<i class='fa-solid fa-wifi text-amber-500'></i>", "İnternet Engeli", "Telefon, bu dosyanın internete bağlanmasını engelliyor. Lütfen dosyayı telefonda 'Chrome' tarayıcısı ile açmayı dene.");
                 console.error("Bağlantı hatası:", e);
             }
         }
