@@ -476,8 +476,9 @@
 
         async function syncWithCloud() {
             try {
-                const response = await fetch(`${DB_URL}.json`);
-                if (!response.ok) throw new Error("Veritabanı bağlantısı yok.");
+                // Önbellek (Cache) kırmak için sonuna zaman damgası ekledik. Telefon hep en güncelini çekecek.
+                const response = await fetch(`${DB_URL}.json?_t=` + new Date().getTime(), { cache: 'no-store' });
+                if (!response.ok) throw new Error("Veritabanı bağlantısı yok veya erişim izni (Rules) kapalı.");
                 const data = await response.json();
                 
                 if (data && typeof data === 'object') {
@@ -523,12 +524,19 @@
         async function uploadData() {
             localStorage.setItem('ilkikra_medrese_backup', JSON.stringify(systemData));
             try {
-                await fetch(`${DB_URL}.json`, {
+                const response = await fetch(`${DB_URL}.json`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(systemData)
                 });
-            } catch(e) {}
+                
+                // Eğer Firebase rules kapalıysa burada hata yakalayacak
+                if (!response.ok) {
+                    console.error("Buluta kayıt BAŞARISIZ! Lütfen Firebase 'Rules' ayarlarından okuma/yazma (read/write) izinlerini 'true' yapın.");
+                }
+            } catch(e) {
+                console.error("Bağlantı hatası:", e);
+            }
         }
 
         // --- GİRİŞ & OTURUM (GATE) ---
