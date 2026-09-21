@@ -196,6 +196,17 @@
                 <div id="adminOverviewList" class="flex-grow overflow-y-auto space-y-3 max-h-[320px] pr-1"></div>
             </div>
         </div>
+
+        <!-- 🔔 YENİ: Canlı İşlem Geçmişi (Log) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col">
+            <div class="flex justify-between items-center mb-3 border-b border-slate-200 pb-2">
+                <h3 class="font-bold text-sm text-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-blue-500"></i> Canlı İşlem Geçmişi
+                </h3>
+                <span class="text-[9px] bg-blue-100 text-blue-700 font-bold px-2 py-1 rounded-lg shadow-sm">Son 50 İşlem</span>
+            </div>
+            <div id="adminActivityList" class="overflow-y-auto space-y-2 max-h-[200px] pr-1"></div>
+        </div>
     </div>
 
     <!-- 👤 2. BİREYSEL SINIF ÇALIŞMA ALANI (HOCA PANELİ) -->
@@ -381,7 +392,8 @@
 
         let systemData = {
             sistem_ayarlari: { adminPassword: "İLK İKRA" },
-            hocalar: {}
+            hocalar: {},
+            aktiviteler: []
         };
 
         let isUnlocked = false;
@@ -462,6 +474,7 @@
                     if(!systemData.sistem_ayarlari) systemData.sistem_ayarlari = { adminPassword: "İLK İKRA" };
                     if(!systemData.sistem_ayarlari.adminPassword) systemData.sistem_ayarlari.adminPassword = "İLK İKRA";
                     if(!systemData.hocalar) systemData.hocalar = {};
+                    if(!systemData.aktiviteler) systemData.aktiviteler = [];
                 } else {
                     await verileriBulutaKaydet();
                 }
@@ -700,6 +713,14 @@
             else if (currentRole === 'teacher') refreshUI();
         }
 
+        function logActivity(message) {
+            if (!systemData.aktiviteler) systemData.aktiviteler = [];
+            const now = new Date();
+            const timeStr = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            systemData.aktiviteler.unshift({ msg: message, time: timeStr, id: Date.now() });
+            if (systemData.aktiviteler.length > 50) systemData.aktiviteler.pop(); // Sadece son 50 işlemi tut, hafızayı şişirme
+        }
+
         function renderAdminPanel() {
             const hocalar = systemData.hocalar || {};
             const keys = Object.keys(hocalar);
@@ -798,6 +819,28 @@
 
             document.getElementById('adminTotalExpected').innerText = adminFilterMonth === 7 ? "0 ₺" : formatCurrency(globalExpected);
             document.getElementById('adminTotalPaid').innerText = adminFilterMonth === 7 ? "0 ₺" : formatCurrency(globalPaid);
+
+            // 🟢 LOG EKRANINI DOLDURMA
+            const actList = document.getElementById('adminActivityList');
+            if(actList) {
+                actList.innerHTML = '';
+                const aktiviteler = systemData.aktiviteler || [];
+                if(aktiviteler.length === 0) {
+                    actList.innerHTML = '<div class="text-[11px] text-slate-500 py-4 text-center italic">Henüz bir işlem geçmişi bulunmuyor.</div>';
+                } else {
+                    aktiviteler.forEach(act => {
+                        const row = document.createElement('div');
+                        row.className = "bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center gap-2 transition hover:bg-slate-50";
+                        row.innerHTML = `
+                            <div class="text-[11px] text-slate-700 leading-relaxed">${act.msg}</div>
+                            <div class="text-[9px] text-slate-400 font-bold whitespace-nowrap flex-shrink-0 flex items-center gap-1">
+                                <i class="fa-regular fa-clock"></i> ${act.time}
+                            </div>
+                        `;
+                        actList.appendChild(row);
+                    });
+                }
+            }
         }
 
         function toggleAdminStudentList(hId) {
@@ -823,6 +866,9 @@
             const hId = 'hoca_' + Date.now();
             if(!systemData.hocalar) systemData.hocalar = {};
             systemData.hocalar[hId] = { isim: name, sifre: '9876', ogrenciler: {} };
+            
+            logActivity(`<i class="fa-solid fa-user-shield text-blue-500"></i> Yönetici, sisteme <b>${name}</b> isimli yeni bir hoca ekledi.`);
+            
             document.getElementById('newTeacherNameInput').value = '';
             verileriBulutaKaydet(); 
             renderAdminPanel();
@@ -831,6 +877,7 @@
         function confirmDeleteTeacher(hId) {
             const hoca = systemData.hocalar[hId];
             confirmActionCallback = () => {
+                logActivity(`<i class="fa-solid fa-user-shield text-rose-500"></i> Yönetici, <b>${hoca.isim}</b> isimli hocayı sistemden sildi.`);
                 delete systemData.hocalar[hId];
                 verileriBulutaKaydet(); 
                 renderAdminPanel(); 
@@ -1043,6 +1090,12 @@
             if (!st) return;
             if (!st.odemeler) st.odemeler = {};
             st.odemeler[cellKey] = !st.odemeler[cellKey];
+            
+            const hocaAdi = systemData.hocalar[currentTeacherId].isim;
+            const ayAdi = MONTHS[parseInt(cellKey.split('-')[1])];
+            const durum = st.odemeler[cellKey] ? '<span class="text-emerald-600 font-bold">ÖDENDİ</span>' : '<span class="text-rose-500 font-bold">GERİ ALINDI</span>';
+            logActivity(`<b>${hocaAdi}</b>, <b>${st.ad}</b> isimli talebenin ${ayAdi} ayı aidatını ${durum} olarak işaretledi.`);
+            
             verileriBulutaKaydet(); 
             refreshUI();
         }
@@ -1077,15 +1130,18 @@
 
             if(!systemData.hocalar[currentTeacherId].ogrenciler) systemData.hocalar[currentTeacherId].ogrenciler = {};
             const ogrs = systemData.hocalar[currentTeacherId].ogrenciler;
+            const hocaAdi = systemData.hocalar[currentTeacherId].isim;
 
             if (editingStudentId && ogrs[editingStudentId]) {
                 ogrs[editingStudentId].ad = name;
                 ogrs[editingStudentId].ucret = fee;
                 ogrs[editingStudentId].veli_tel = phone;
+                logActivity(`<b>${hocaAdi}</b>, <b>${name}</b> isimli talebenin bilgilerini güncelledi.`);
             } else {
                 const newId = 'st_' + Date.now();
                 ogrs[newId] = { ad: name, ucret: fee, veli_tel: phone, odemeler: {} };
                 selectedStudentId = newId;
+                logActivity(`<b>${hocaAdi}</b>, sınıfına <b>${name}</b> isimli talebeyi (<span class="text-emerald-600 font-bold">${formatCurrency(fee)}</span>) kaydetti.`);
             }
             verileriBulutaKaydet(); 
             closeStudentModal(); 
@@ -1096,8 +1152,13 @@
             const st = getTeacherStudents()[stId];
             if (!st) return;
             confirmActionCallback = () => {
+                const stAdi = st.ad;
+                const hocaAdi = systemData.hocalar[currentTeacherId].isim;
                 delete systemData.hocalar[currentTeacherId].ogrenciler[stId];
                 if (selectedStudentId === stId) selectedStudentId = null;
+                
+                logActivity(`<b>${hocaAdi}</b>, sınıfından <b>${stAdi}</b> isimli talebenin kaydını sildi.`);
+                
                 verileriBulutaKaydet(); 
                 refreshUI(); 
                 closeConfirmModal();
