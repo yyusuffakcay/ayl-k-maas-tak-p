@@ -1091,10 +1091,7 @@
             if (!st.odemeler) st.odemeler = {};
             st.odemeler[cellKey] = !st.odemeler[cellKey];
             
-            const hocaAdi = systemData.hocalar[currentTeacherId].isim;
-            const ayAdi = MONTHS[parseInt(cellKey.split('-')[1])];
-            const durum = st.odemeler[cellKey] ? '<span class="text-emerald-600 font-bold">ÖDENDİ</span>' : '<span class="text-rose-500 font-bold">GERİ ALINDI</span>';
-            logActivity(`<b>${hocaAdi}</b>, <b>${st.ad}</b> isimli talebenin ${ayAdi} ayı aidatını ${durum} olarak işaretledi.`);
+            // Gereksiz kalabalık yapmaması için ödeme durumu değişikliği bildirimi (log) kaldırıldı
             
             verileriBulutaKaydet(); 
             refreshUI();
@@ -1136,12 +1133,14 @@
                 ogrs[editingStudentId].ad = name;
                 ogrs[editingStudentId].ucret = fee;
                 ogrs[editingStudentId].veli_tel = phone;
-                logActivity(`<b>${hocaAdi}</b>, <b>${name}</b> isimli talebenin bilgilerini güncelledi.`);
+                // Öğrenci bilgisi güncellendiğinde bildirim atması kaldırıldı
             } else {
                 const newId = 'st_' + Date.now();
                 ogrs[newId] = { ad: name, ucret: fee, veli_tel: phone, odemeler: {} };
                 selectedStudentId = newId;
-                logActivity(`<b>${hocaAdi}</b>, sınıfına <b>${name}</b> isimli talebeyi (<span class="text-emerald-600 font-bold">${formatCurrency(fee)}</span>) kaydetti.`);
+                
+                // SADECE YENİ KAYITLARDA BİLDİRİM (LOG) ATACAK:
+                logActivity(`<b>${hocaAdi}</b>, sınıfına <b>${name}</b> isimli yeni talebeyi (<span class="text-emerald-600 font-bold">${formatCurrency(fee)}</span>) kaydetti.`);
             }
             verileriBulutaKaydet(); 
             closeStudentModal(); 
@@ -1153,11 +1152,10 @@
             if (!st) return;
             confirmActionCallback = () => {
                 const stAdi = st.ad;
-                const hocaAdi = systemData.hocalar[currentTeacherId].isim;
                 delete systemData.hocalar[currentTeacherId].ogrenciler[stId];
                 if (selectedStudentId === stId) selectedStudentId = null;
                 
-                logActivity(`<b>${hocaAdi}</b>, sınıfından <b>${stAdi}</b> isimli talebenin kaydını sildi.`);
+                // Öğrenci silindiğinde bildirim atması kaldırıldı
                 
                 verileriBulutaKaydet(); 
                 refreshUI(); 
